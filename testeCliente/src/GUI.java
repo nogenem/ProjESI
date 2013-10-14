@@ -2,12 +2,9 @@ import java.awt.Component;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.PrintWriter;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
 import org.json.JSONObject;
-
 import JPanels.INossoPanel;
 import JPanels.Login;
 import PP_Observer.Notificavel;

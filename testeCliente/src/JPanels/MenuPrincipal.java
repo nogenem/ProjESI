@@ -5,6 +5,8 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.PrintWriter;
+import java.util.HashMap;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -44,59 +46,70 @@ public class MenuPrincipal extends JPanel implements ActionListener, INossoPanel
 		JButton btnListarTarefas = new JButton("Listar Tarefas");
 		btnListarTarefas.setMargin(new Insets(0, 0, 0, 0));
 		btnListarTarefas.setBounds(10, 93, 124, 23);
+		btnListarTarefas.addActionListener(this);
 		add(btnListarTarefas);
 		
 		JButton btnListarProjetos = new JButton("Listar Projetos");
 		btnListarProjetos.setMargin(new Insets(0, 0, 0, 0));
 		btnListarProjetos.setBounds(10, 127, 124, 23);
+		btnListarProjetos.addActionListener(this);
 		add(btnListarProjetos);
 		
 		JButton btnListarArquivos = new JButton("Listar Arquivos");
 		btnListarArquivos.setMargin(new Insets(0, 0, 0, 0));
 		btnListarArquivos.setBounds(144, 93, 124, 23);
+		btnListarArquivos.addActionListener(this);
 		add(btnListarArquivos);
 		
 		JButton btnAdicionarArquivo = new JButton("Adicionar Arquivo");
 		btnAdicionarArquivo.setMargin(new Insets(0, 0, 0, 0));
 		btnAdicionarArquivo.setBounds(144, 127, 124, 23);
+		btnAdicionarArquivo.addActionListener(this);
 		add(btnAdicionarArquivo);
 		
 		JButton btnAdicionarTarefa = new JButton("Adicionar Tarefa");
 		btnAdicionarTarefa.setMargin(new Insets(0, 0, 0, 0));
 		btnAdicionarTarefa.setBounds(144, 267, 124, 23);
+		btnAdicionarTarefa.addActionListener(this);
 		add(btnAdicionarTarefa);
 		
 		JButton btnAdicionarProjeto = new JButton("Adicionar Projeto");
 		btnAdicionarProjeto.setMargin(new Insets(0, 0, 0, 0));
 		btnAdicionarProjeto.setBounds(10, 199, 124, 23);
+		btnAdicionarProjeto.addActionListener(this);
 		add(btnAdicionarProjeto);
 		
 		JButton btnAdicionarEquipe = new JButton("Adicionar Equipe");
 		btnAdicionarEquipe.setMargin(new Insets(0, 0, 0, 0));
 		btnAdicionarEquipe.setBounds(144, 199, 124, 23);
+		btnAdicionarEquipe.addActionListener(this);
 		add(btnAdicionarEquipe);
 		
 		JButton btnAdicionarMembro = new JButton("Adicionar Membro");
 		btnAdicionarMembro.setMargin(new Insets(0, 0, 0, 0));
 		btnAdicionarMembro.setBounds(280, 199, 124, 23);
+		btnAdicionarMembro.addActionListener(this);
 		add(btnAdicionarMembro);
 		
 		JButton btnRemoverMembro = new JButton("Remover Membro");
 		btnRemoverMembro.setMargin(new Insets(0, 0, 0, 0));
 		btnRemoverMembro.setBounds(280, 233, 124, 23);
+		btnRemoverMembro.addActionListener(this);
 		add(btnRemoverMembro);
 		
 		JButton btnRemoverProjeto = new JButton("Remover Projeto");
 		btnRemoverProjeto.setMargin(new Insets(0, 0, 0, 0));
 		btnRemoverProjeto.setBounds(10, 233, 124, 23);
+		btnRemoverProjeto.addActionListener(this);
 		add(btnRemoverProjeto);
 		
 		JButton btnRemoverEquipe = new JButton("Remover Equipe");
 		btnRemoverEquipe.setMargin(new Insets(0, 0, 0, 0));
 		btnRemoverEquipe.setBounds(144, 233, 124, 23);
+		btnRemoverEquipe.addActionListener(this);
 		add(btnRemoverEquipe);	
 		
-		JButton btnVoltar = new JButton("Voltar");
+		JButton btnVoltar = new JButton("Sair");
 		btnVoltar.setMargin(new Insets(0, 0, 0, 0));
 		btnVoltar.setBounds(315, 9, 89, 23);
 		btnVoltar.addActionListener(this);
@@ -115,8 +128,17 @@ public class MenuPrincipal extends JPanel implements ActionListener, INossoPanel
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if(arg0.getActionCommand().equals("Voltar")){
+		if(arg0.getActionCommand().equals("Sair")){
 			next = new Login(escritor);
+			
+			JSONObject packet = new JSONObject();
+        	packet.put("desconectar", "sair");
+        	
+        	escritor.println(packet.toString());
+        	escritor.flush();
+		}else if(arg0.getActionCommand().equals("Adicionar Projeto")){
+			next = new AdicionarProj(escritor);
+			
 			notificar();
 		}
 	}

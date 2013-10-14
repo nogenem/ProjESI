@@ -60,11 +60,13 @@ public class Login extends JPanel implements ActionListener, INossoPanel, Notifi
 		add(pfSenha);
 		
 		JButton btnLogar = new JButton("Logar");
+		btnLogar.setMargin(new Insets(0, 0, 0, 0));
 		btnLogar.setBounds(10, 127, 73, 23);
 		btnLogar.addActionListener(this);
 		add(btnLogar);
 		
 		JButton btnFechar = new JButton("Fechar");
+		btnFechar.setMargin(new Insets(0, 0, 0, 0));
 		btnFechar.setBounds(93, 127, 73, 23);
 		btnFechar.addActionListener(this);
 		add(btnFechar);
@@ -92,7 +94,7 @@ public class Login extends JPanel implements ActionListener, INossoPanel, Notifi
 			packet.put("logar", tmp);
 			
 			escritor.println(packet.toString());
-			escritor.flush();			
+			escritor.flush();	
 		}else if(arg0.getActionCommand().equals("Fechar")){
 			JSONObject tmp = new JSONObject();
 			tmp.put("desconectar", "");

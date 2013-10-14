@@ -121,6 +121,13 @@ public class Controle {
 			sessao.getUser().desconectar(); //Por enquanto soh muda o 'isOn' da classe usuario.
 		}catch(Exception e){}
 		
+		if(packet.getString("desconectar").equals("sair")){//quando clicar no botao sair do menu principal
+			packet = new JSONObject();
+			packet.put("OK", "");
+			
+			return packet;
+		}
+		
 		return null; //Retorna null para cancelar a thread desse usuario
 	}
 	
