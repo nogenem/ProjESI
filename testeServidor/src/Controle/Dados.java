@@ -2,6 +2,7 @@ package Controle;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 import Modelo.Equipe;
 import Modelo.Usuario;
@@ -34,6 +35,12 @@ public class Dados {
 		if(!usuarios.containsKey(login))
 			throw new Exception("Usuario nao encontrado.");
 		return usuarios.get(login);
+	}
+	
+	public Equipe getEquipe(String equipeName) throws Exception{
+		if(!equipes.containsKey(equipeName))
+			throw new Exception("Equipe nao encontrado.");
+		return equipes.get(equipeName);
 	}
 	
 	public Usuario efetuarLogin(String login, String senha) throws Exception{
@@ -83,14 +90,14 @@ public class Dados {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ArrayList<String> listarEquipes(){ //eh necessario?
-		ArrayList<String> lista = (ArrayList<String>) equipes.keySet();
+	public Set<String> listarEquipes(){ //eh necessario?
+		Set<String> lista = equipes.keySet();
 		return lista;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ArrayList<String> listarUsuarios(){ //eh necessario?
-		ArrayList<String> lista = (ArrayList<String>) usuarios.keySet();
+	public Set<String> listarUsuarios(){ //eh necessario?
+		Set<String> lista = usuarios.keySet();
 		return lista;
 	}
 }

@@ -77,7 +77,7 @@ public abstract class SessaoAbstrata {
 		throw new Exception("Usuario nao tem permissao para executar esta açao.");
 	}
 	
-	public void adicionarProjeto(String projName) throws Exception{
+	public void adicionarProjeto(String projName, Equipe equipe) throws Exception{
 		throw new Exception("Usuario nao tem permissao para executar esta açao.");
 	}
 	

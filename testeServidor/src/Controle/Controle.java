@@ -1,9 +1,11 @@
 package Controle;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import org.json.JSONObject;
 
+import Modelo.Equipe;
 import Modelo.Usuario;
 import Modelo.Infos.InfoArquivo;
 import Modelo.Infos.InfoTarefa;
@@ -328,7 +330,9 @@ public class Controle {
 		
 		packet = new JSONObject();
 		try{
-			sessao.adicionarProjeto(projName);
+			Equipe equipe = dados.getEquipe(tmp.getString("equipe"));
+			
+			sessao.adicionarProjeto(projName, equipe);
 			packet.put("OK", "Projeto adicionado com sucesso.");
 		}catch(Exception e){
 			packet.put("err", e.getMessage());
@@ -384,7 +388,7 @@ public class Controle {
 		packet = new JSONObject();
 		try {
 			//sessao.listarEquipes();  //soh adm pode usar? eh necessaria?
-			ArrayList<String> equipes = dados.listarEquipes();
+			Set<String> equipes = dados.listarEquipes();
 			packet.put("lista", equipes);
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
@@ -396,7 +400,7 @@ public class Controle {
 		packet = new JSONObject();
 		try {
 			//sessao.listarUsuarios();  //soh adm pode usar? eh necessaria?
-			ArrayList<String> usuarios = dados.listarUsuarios();
+			Set<String> usuarios = dados.listarUsuarios();
 			packet.put("lista", usuarios);
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());

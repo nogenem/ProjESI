@@ -131,8 +131,8 @@ public class Cadastro extends JPanel implements ActionListener, INossoPanel, Not
 	}
 
 	@Override
-	public void notificar() { //Notifica a GUI para mudar para o proximo conteudo
-		notificado.serNotificado();
+	public void notificar(JSONObject packet) { //Notifica a GUI para mudar para o proximo conteudo
+		notificado.serNotificado(packet);
 	}
 
 	@Override
@@ -158,7 +158,7 @@ public class Cadastro extends JPanel implements ActionListener, INossoPanel, Not
 			escritor.println(packet.toString());
 			escritor.flush();			
 		}else if(arg0.getActionCommand().equals("Cancelar")){
-			notificar(); //Faz mudar para o next, q sera o login
+			notificar(null); //Faz mudar para o next, q sera o login
 		}
 	}
 }

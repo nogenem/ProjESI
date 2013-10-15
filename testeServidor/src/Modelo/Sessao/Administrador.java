@@ -1,6 +1,8 @@
 package Modelo.Sessao;
 
 import java.util.ArrayList;
+
+import Modelo.Equipe;
 import Modelo.Usuario;
 import Modelo.Infos.InfoArquivo;
 import Modelo.Infos.InfoTarefa;
@@ -89,10 +91,8 @@ public class Administrador extends SessaoAbstrata {
 		getEquipe().removerMembro(user);
 	}
 
-	public void adicionarProjeto(String projName) throws Exception{
-		if(getEquipe() == null)
-			throw new Exception("Usuario sem equipe.");
-		getEquipe().adicionarProjeto(projName);
+	public void adicionarProjeto(String projName, Equipe equipe) throws Exception{
+		equipe.adicionarProjeto(projName);
 	}
 
 	public void removerProjeto(String projName) throws Exception{

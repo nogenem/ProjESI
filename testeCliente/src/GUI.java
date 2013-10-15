@@ -86,7 +86,7 @@ public class GUI implements Notificavel {
 	 * Funcao do padrao de projeto Observador.
 	 */
 	@Override
-	public void serNotificado() {
-		changeConteudo(null);
+	public void serNotificado(JSONObject packet) {
+		changeConteudo(packet);
 	}
 }

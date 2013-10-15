@@ -1,19 +1,19 @@
 package JPanels;
 
 import java.awt.Font;
-import java.awt.Rectangle;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.PrintWriter;
-import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
 import org.json.JSONObject;
+
 import PP_Observer.Notificador;
 import PP_Observer.Notificavel;
-import java.awt.Insets;
 
 public class MenuPrincipal extends JPanel implements ActionListener, INossoPanel, Notificador {
 	
@@ -136,10 +136,18 @@ public class MenuPrincipal extends JPanel implements ActionListener, INossoPanel
         	
         	escritor.println(packet.toString());
         	escritor.flush();
-		}else if(arg0.getActionCommand().equals("Adicionar Projeto")){
-			next = new AdicionarProj(escritor);
+		}else if(arg0.getActionCommand().equals("Adicionar Projeto")){  
+			next = new EscolheEquipe(escritor, new AdicionarProj(escritor));
 			
-			notificar();
+			JSONObject packet = new JSONObject();
+        	packet.put("listarEquipes", "");
+        	
+        	escritor.println(packet.toString());
+        	escritor.flush();
+		}else if(arg0.getActionCommand().equals("Adicionar Equipe")){
+			next = new AdicionarEquipe(escritor);
+			
+			notificar(null);
 		}
 	}
 
@@ -149,7 +157,7 @@ public class MenuPrincipal extends JPanel implements ActionListener, INossoPanel
 	}
 
 	@Override
-	public void notificar() { //Notifica a GUI para mudar para o proximo conteudo
-		notificado.serNotificado();
+	public void notificar(JSONObject packet) { //Notifica a GUI para mudar para o proximo conteudo
+		notificado.serNotificado(packet);
 	}
 }

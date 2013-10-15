@@ -105,7 +105,7 @@ public class Login extends JPanel implements ActionListener, INossoPanel, Notifi
 			System.exit(0);
 		}else if(arg0.getActionCommand().equals("Cadastrar")){
 			next = new Cadastro(escritor); //muda o next para o cadastro
-			notificar(); //notifica a GUI para mudar para o next, q sera o cadastro
+			notificar(null); //notifica a GUI para mudar para o next, q sera o cadastro
 		}
 	}
 
@@ -125,7 +125,7 @@ public class Login extends JPanel implements ActionListener, INossoPanel, Notifi
 	}
 
 	@Override
-	public void notificar() { //Notifica a GUI para mudar para o proximo conteudo
-		notificado.serNotificado();
+	public void notificar(JSONObject packet) { //Notifica a GUI para mudar para o proximo conteudo
+		notificado.serNotificado(packet);
 	}
 }
