@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -39,7 +40,7 @@ public class EscolheEquipe extends JPanel implements ActionListener, INossoPanel
 		add(lblEscolheEquipe);
 		
 		JLabel lblEquipes = new JLabel("Equipes:");
-		lblEquipes.setBounds(10, 50, 46, 14);
+		lblEquipes.setBounds(10, 50, 63, 14);
 		add(lblEquipes);
 		
 		JScrollPane scrollPane = new JScrollPane();
@@ -79,6 +80,7 @@ public class EscolheEquipe extends JPanel implements ActionListener, INossoPanel
 			lista[i] = array.get(i).toString();
 		}
 		list.setListData(lista);
+		list.setSelectedIndex(0);
 	}
 	@Override
 	public void setarNotificavel(Notificavel notificavel) {
@@ -87,10 +89,11 @@ public class EscolheEquipe extends JPanel implements ActionListener, INossoPanel
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getActionCommand().equals("Continuar")){
+			if(list.getSelectedValue() == null){
+				JOptionPane.showMessageDialog(this, "Eh preciso selecionar alguma equipe.");
+			}
 			
 			String equipe = list.getSelectedValue().toString();
-			
-			System.out.println("Equipe: "+ equipe);
 			
 			JSONObject packet = new JSONObject();
 			
