@@ -1,23 +1,29 @@
 package JPanels;
 
 import java.awt.Font;
-import java.awt.Rectangle;
+import java.awt.Insets;
+import java.awt.KeyEventPostProcessor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.PrintWriter;
 import java.util.HashMap;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+
 import org.json.JSONObject;
+
 import PP_Observer.Notificador;
 import PP_Observer.Notificavel;
-import javax.swing.SwingConstants;
-import java.awt.Insets;
 
-public class Login extends JPanel implements ActionListener, INossoPanel, Notificador {
+public class Login extends JPanel implements ActionListener, INossoPanel, Notificador,FocusListener,KeyListener {
 
 	private Notificavel notificado;
 	private PrintWriter escritor;
@@ -26,9 +32,9 @@ public class Login extends JPanel implements ActionListener, INossoPanel, Notifi
 	private JTextField tfLogin;
 	private JPasswordField pfSenha;
 
-	public Login(PrintWriter escritor){
+	public Login(PrintWriter escritor)
+	{
 		this.escritor = escritor;
-
 		setLayout(null);
 		setSize(188, 224+30); //gambiarra hehe
 
@@ -54,6 +60,7 @@ public class Login extends JPanel implements ActionListener, INossoPanel, Notifi
 		pfSenha = new JPasswordField();
 		lblSenha.setLabelFor(pfSenha);
 		pfSenha.setBounds(54, 86, 112, 20);
+		pfSenha.addKeyListener(this);
 		add(pfSenha);
 
 		JButton btnLogar = new JButton("Logar");
@@ -126,5 +133,52 @@ public class Login extends JPanel implements ActionListener, INossoPanel, Notifi
 	@Override
 	public void notificar(JSONObject packet) { //Notifica a GUI para mudar para o proximo conteudo
 		notificado.serNotificado(packet);
+	}
+
+	@Override
+	public void keyPressed(KeyEvent arg0)
+	{
+		if( arg0.getComponent().equals( this.pfSenha ))
+		{
+			if( arg0.getKeyCode() == KeyEvent.VK_ENTER)
+			{
+				next = new ListaEquipes(escritor); //editar aki
+				
+				JSONObject packet = new JSONObject();
+
+				HashMap<String, String> tmp = new HashMap<>();
+				tmp.put("login", tfLogin.getText());
+				tmp.put("senha", new String(pfSenha.getPassword()));
+
+				packet.put("logar", tmp);
+
+				escritor.println(packet.toString());
+				escritor.flush();
+			}
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void focusGained(FocusEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void focusLost(FocusEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }
