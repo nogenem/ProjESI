@@ -28,7 +28,6 @@ public class Login extends JPanel implements ActionListener, INossoPanel, Notifi
 
 	public Login(PrintWriter escritor){
 		this.escritor = escritor;
-		this.next = new MenuPrincipal(escritor); //Seta o next como o MenuPrincipal()
 
 		setLayout(null);
 		setSize(188, 224+30); //gambiarra hehe
@@ -83,6 +82,8 @@ public class Login extends JPanel implements ActionListener, INossoPanel, Notifi
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getActionCommand().equals("Logar")){
+			next = new ListaEquipes(escritor); //editar aki
+			
 			JSONObject packet = new JSONObject();
 
 			HashMap<String, String> tmp = new HashMap<>();

@@ -1,6 +1,7 @@
 package Controle;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 
 import org.json.JSONObject;
@@ -39,14 +40,16 @@ public class Controle {
 			return desconectar(packet);
 		else if(packet.has("listarEquipes")) 
 			return listarEquipes(packet);
+		else if(packet.has("listarMembros")) 
+			return listarMembros(packet);
 		else if(packet.has("listarUsuarios")) //eh preciso?
 			return listarUsuarios(packet);
 		else if(packet.has("listarTarefas"))
 			return listarTarefas(packet);
 		else if(packet.has("listarProjetos"))
-			return listarTarefas(packet);
+			return listarProjetos(packet);
 		else if(packet.has("listarArquivos"))
-			return listarTarefas(packet);
+			return listarArquivos(packet);
 		else if(packet.has("addArquivo"))
 			return adicionarArquivo(packet);
 		else if(packet.has("removeArquivo"))
@@ -86,15 +89,16 @@ public class Controle {
 		String login = tmp.get("login").toString();
 		String senha = tmp.get("senha").toString();
 		
-		packet = new JSONObject();
 		try{
 			Usuario user = dados.efetuarLogin(login, senha);
 			sessao = dados.criarSessao(user);
-			packet.put("OK", "");
 		}catch(Exception e){
+			packet = new JSONObject();
 			packet.put("err", e.getMessage());
+			
+			return packet;
 		}
-		return packet;
+		return listarEquipes(null); //ja retorna a lista de equipes
 	}
 	
 	public JSONObject cadastrarUsuario(JSONObject packet){
@@ -133,10 +137,10 @@ public class Controle {
 		return null; //Retorna null para cancelar a thread desse usuario
 	}
 	
-	public JSONObject listarTarefas(JSONObject packet){
+	public JSONObject listarTarefas(JSONObject packet){ //refazer depois
 		packet = new JSONObject();
 		try {
-			ArrayList<String> tarefas = sessao.listarTarefas();
+			Set<String> tarefas = sessao.listarTarefas("");
 			packet.put("lista", tarefas);
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
@@ -145,9 +149,13 @@ public class Controle {
 	}
 	
 	public JSONObject listarProjetos(JSONObject packet){
+		JSONObject tmp = packet.getJSONObject("listarProjetos");
+		String equipeName = tmp.get("equipe").toString();
+		
 		packet = new JSONObject();
 		try {
-			ArrayList<String> projetos = sessao.listarProjetos();
+			Equipe equipe = dados.getEquipe(equipeName);
+			Set<String> projetos = sessao.listarProjetos(equipe);
 			packet.put("lista", projetos);
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
@@ -155,10 +163,14 @@ public class Controle {
 		return packet;
 	}
 	
-	public JSONObject listarArquivos(JSONObject packet){
+	public JSONObject listarArquivos(JSONObject packet){ //refazer isso
+		JSONObject tmp = packet.getJSONObject("listarArquivos");
+		String equipeName = tmp.getString("equipe");
+		
 		packet = new JSONObject();
 		try {
-			ArrayList<String> arquivos = sessao.listarArquivos();
+			Equipe equipe = dados.getEquipe(equipeName);
+			Set<String> arquivos = sessao.listarArquivos(equipe);
 			packet.put("lista", arquivos);
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
@@ -166,14 +178,31 @@ public class Controle {
 		return packet;
 	}
 	
-	public JSONObject adicionarArquivo(JSONObject packet){
-		JSONObject tmp = packet.getJSONObject("addArquivo");
-		String titulo = tmp.getString("titulo");
-		String conteudo = tmp.getString("conteudo");
+	public JSONObject listarMembros(JSONObject packet){
+		JSONObject tmp = packet.getJSONObject("listarMembros");
+		String equipeName = tmp.get("equipe").toString();
 		
 		packet = new JSONObject();
 		try {
-			sessao.adicionarArquivo(titulo, conteudo);
+			Equipe equipe = dados.getEquipe(equipeName);
+			Set<String> membros = sessao.listarMembros(equipe);
+			packet.put("lista", membros);
+		} catch (Exception e) {
+			packet.put("err", e.getMessage());
+		}
+		return packet;
+	}
+	
+	public JSONObject adicionarArquivo(JSONObject packet){ 
+		JSONObject tmp = packet.getJSONObject("addArquivo");
+		String titulo = tmp.getString("titulo");
+		String conteudo = tmp.getString("conteudo");
+		String equipeName = tmp.getString("equipe");
+		
+		packet = new JSONObject();
+		try {
+			Equipe equipe = dados.getEquipe(equipeName);
+			sessao.adicionarArquivo(titulo, conteudo, equipe);
 			packet.put("OK", "Arquivo adicionado com sucesso.");
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
@@ -181,13 +210,15 @@ public class Controle {
 		return packet;
 	}
 	
-	public JSONObject removerArquivo(JSONObject packet){
+	public JSONObject removerArquivo(JSONObject packet){ 
 		JSONObject tmp = packet.getJSONObject("removeArquivo");
 		String titulo = tmp.getString("titulo");
+		String equipeName = tmp.getString("equipe");
 		
 		packet = new JSONObject();
 		try {
-			sessao.removerArquivo(titulo);
+			Equipe equipe = dados.getEquipe(equipeName);
+			sessao.removerArquivo(titulo, equipe);
 			packet.put("OK", "Arquivo removido com sucesso.");
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
@@ -195,14 +226,21 @@ public class Controle {
 		return packet;
 	}
 	
-	public JSONObject visualizarArquivo(JSONObject packet){
+	public JSONObject visualizarArquivo(JSONObject packet){ 
 		JSONObject tmp = packet.getJSONObject("viewArquivo");
 		String titulo = tmp.getString("titulo");
+		String equipeName = tmp.getString("equipe");
 		
 		packet = new JSONObject();
 		try {
-			InfoArquivo info = sessao.visualizarArquivo(titulo);
-			packet.put("view", info);
+			Equipe equipe = dados.getEquipe(equipeName);
+			InfoArquivo info = sessao.visualizarArquivo(titulo, equipe);
+			
+			HashMap<String, String> tmp2 = new HashMap<>();
+			tmp2.put("titulo", info.getTitulo());
+			tmp2.put("conteudo", info.getConteudo());
+			
+			packet.put("view", tmp2);
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
 		}
@@ -213,10 +251,12 @@ public class Controle {
 		JSONObject tmp = packet.getJSONObject("editArquivo");
 		String titulo = tmp.getString("titulo");
 		String conteudo = tmp.getString("conteudo");
+		String equipeName = tmp.getString("equipe");
 		
 		packet = new JSONObject();
 		try {
-			sessao.modificarArquivo(new InfoArquivo(titulo, conteudo));
+			Equipe equipe = dados.getEquipe(equipeName);
+			sessao.modificarArquivo(new InfoArquivo(titulo, conteudo), equipe);
 			packet.put("OK", "Arquivo modificado com sucesso.");
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
@@ -297,11 +337,14 @@ public class Controle {
 	public JSONObject adicionarMembro(JSONObject packet){
 		JSONObject tmp = packet.getJSONObject("addMembro");
 		String login = tmp.getString("login");
+		String equipeName = tmp.getString("equipe");
 		
 		packet = new JSONObject();
 		try {
 			Usuario user = dados.getUsuario(login);
-			sessao.adicionarMembro(user);
+			Equipe equipe = dados.getEquipe(equipeName);
+			
+			sessao.adicionarMembro(user, equipe);
 			packet.put("OK", "Usuario adicionado a equipe com sucesso.");
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
@@ -312,11 +355,14 @@ public class Controle {
 	public JSONObject removerMembro(JSONObject packet){
 		JSONObject tmp = packet.getJSONObject("removeMembro");
 		String login = tmp.getString("login");
+		String equipeName = tmp.getString("equipe");
 		
 		packet = new JSONObject();
 		try {
 			Usuario user = dados.getUsuario(login);
-			sessao.removerMembro(user);
+			Equipe equipe = dados.getEquipe(equipeName);
+			
+			sessao.removerMembro(user, equipe);
 			packet.put("OK", "Usuario removido da equipe com sucesso.");
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
@@ -327,10 +373,11 @@ public class Controle {
 	public JSONObject adicionarProjeto(JSONObject packet){
 		JSONObject tmp = packet.getJSONObject("addProj");
 		String projName = tmp.getString("nome");
+		String equipeName = tmp.getString("equipe");
 		
 		packet = new JSONObject();
 		try{
-			Equipe equipe = dados.getEquipe(tmp.getString("equipe"));
+			Equipe equipe = dados.getEquipe(equipeName);
 			
 			sessao.adicionarProjeto(projName, equipe);
 			packet.put("OK", "Projeto adicionado com sucesso.");
@@ -343,10 +390,13 @@ public class Controle {
 	public JSONObject removerProjeto(JSONObject packet){
 		JSONObject tmp = packet.getJSONObject("removeProj");
 		String projName = tmp.getString("nome");
+		String equipeName = tmp.getString("equipe");
 		
 		packet = new JSONObject();
 		try{
-			sessao.removerProjeto(projName);
+			Equipe equipe = dados.getEquipe(equipeName);
+			
+			sessao.removerProjeto(projName, equipe);
 			packet.put("OK", "Projeto removido com sucesso.");
 		}catch(Exception e){
 			packet.put("err", e.getMessage());
