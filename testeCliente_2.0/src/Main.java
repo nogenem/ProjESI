@@ -25,7 +25,8 @@ public class Main {
 	 * Funcao para inicializar a comunicacao.
 	 * Caso o servidor nao esteja online ira gerar uma excecao que sera tratada pelo catch.
 	 */
-	public void configuraRede(){
+	public void configuraRede()
+	{
 		try {
 			socket = new Socket("127.0.0.1", 5000);
 			escritor = new PrintWriter(socket.getOutputStream());

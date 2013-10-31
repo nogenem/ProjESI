@@ -101,9 +101,9 @@ public class Equipe {
 	
 	public void adicionarMembro(Usuario user) throws Exception{
 		if(membros.containsKey(user.getLogin()))
-			throw new Exception("Usuario ja é membro desta equipe.");
+			throw new Exception("Usuario ja Ã© membro desta equipe.");
 		else if(user.getEquipe() != null)
-			throw new Exception("Usuario ja é membro de uma equipe.");
+			throw new Exception("Usuario ja Ã© membro de uma equipe.");
 		membros.put(user.getLogin(), user);
 		user.setEquipe(this);
 	}
