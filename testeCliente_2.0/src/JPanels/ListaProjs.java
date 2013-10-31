@@ -134,6 +134,25 @@ public class ListaProjs extends JPanel implements ActionListener, INossoPanel, N
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getActionCommand().equals("Listar Tarefas")){
+			String projName = list.getSelectedValue();
+			
+			if(projName == null){
+				JOptionPane.showMessageDialog(this, "Eh preciso selecionar um projeto antes.");
+				return;
+			}
+			
+			next = new ListaTarefas(escritor, equipeName, projName);
+			
+			JSONObject packet = new JSONObject();
+			
+			HashMap<String, String> tmp = new HashMap<>();
+			tmp.put("equipe", equipeName);
+			tmp.put("projName", projName);
+			
+			packet.put("listarTarefas", tmp);
+			
+			escritor.println(packet.toString());
+			escritor.flush();
 			
 		}else if(arg0.getActionCommand().equals("Voltar")){
 			next = new ListaEquipes(escritor);

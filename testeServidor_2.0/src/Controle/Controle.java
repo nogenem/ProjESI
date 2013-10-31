@@ -137,10 +137,16 @@ public class Controle {
 		return null; //Retorna null para cancelar a thread desse usuario
 	}
 	
-	public JSONObject listarTarefas(JSONObject packet){ //refazer depois
+	public JSONObject listarTarefas(JSONObject packet){ 
+		JSONObject tmp = packet.getJSONObject("listarTarefas");
+		String equipeName = tmp.getString("equipe");
+		String projName = tmp.getString("projName");
+		
 		packet = new JSONObject();
 		try {
-			Set<String> tarefas = sessao.listarTarefas("");
+			Equipe equipe = dados.getEquipe(equipeName);
+			
+			Set<String> tarefas = sessao.listarTarefas(equipe, projName);
 			packet.put("lista", tarefas);
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
@@ -272,11 +278,14 @@ public class Controle {
 		String dataTermino = tmp.getString("dataTermino");
 		String recursos = tmp.getString("recursos");
 		String projName = tmp.getString("projName");
+		String equipeName = tmp.getString("equipe");
 		
 		packet = new JSONObject();
 		try {
+			Equipe equipe = dados.getEquipe(equipeName);
 			InfoTarefa info = new InfoTarefa(titulo, descricao, dataInicio, dataTermino, recursos);
-			sessao.adicionarTarefa(info, projName);
+			
+			sessao.adicionarTarefa(info, equipe, projName);
 			packet.put("OK", "Tarefa adicionada com sucesso.");
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
@@ -288,10 +297,12 @@ public class Controle {
 		JSONObject tmp = packet.getJSONObject("removeTarefa");
 		String titulo = tmp.getString("titulo");
 		String projName = tmp.getString("projName");
+		String equipeName = tmp.getString("equipe");
 		
 		packet = new JSONObject();
 		try {
-			sessao.removerTarefa(titulo, projName);
+			Equipe equipe = dados.getEquipe(equipeName);
+			sessao.removerTarefa(titulo, equipe, projName);
 			packet.put("OK", "Tarefa removida com sucesso.");
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
@@ -303,11 +314,21 @@ public class Controle {
 		JSONObject tmp = packet.getJSONObject("viewTarefa");
 		String titulo = tmp.getString("titulo");
 		String projName = tmp.getString("projName");
+		String equipeName = tmp.getString("equipe");
 		
 		packet = new JSONObject();
 		try {
-			InfoTarefa info = sessao.visualizarTarefa(titulo, projName);
-			packet.put("view", info);
+			Equipe equipe = dados.getEquipe(equipeName);
+			InfoTarefa info = sessao.visualizarTarefa(titulo, equipe, projName);
+
+			HashMap<String, String> tmp2 = new HashMap<>();
+			tmp2.put("titulo", info.getTitulo());
+			tmp2.put("descricao", info.getDescricao());
+			tmp2.put("dataInicio", info.getDataInicio());
+			tmp2.put("dataTermino", info.getDataTermino());
+			tmp2.put("recursos", info.getRecursos());
+			
+			packet.put("view", tmp2);
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
 		}
@@ -322,11 +343,15 @@ public class Controle {
 		String dataTermino = tmp.getString("dataTermino");
 		String recursos = tmp.getString("recursos");
 		String projName = tmp.getString("projName");
+		String equipeName = tmp.getString("equipe");
 		
 		packet = new JSONObject();
 		try {
+			Equipe equipe = dados.getEquipe(equipeName);
 			InfoTarefa info = new InfoTarefa(titulo, descricao, dataInicio, dataTermino, recursos);
-			sessao.modificarTarefa(info, projName);
+			
+			sessao.modificarTarefa(info, equipe, projName);
+		
 			packet.put("OK", "Tarefa modificada com sucesso.");
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());

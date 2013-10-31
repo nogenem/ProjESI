@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import Infos.InfoArquivo;
+import Infos.InfoTarefa;
 import PP_Observer.Notificador;
 import PP_Observer.Notificavel;
 
@@ -119,7 +120,13 @@ public class ListaTarefas extends JPanel implements ActionListener, INossoPanel,
 				list.setSelectedIndex(list.getLastVisibleIndex());
 			}
 		}else if(packet.has("view")){
+			JSONObject tmp = packet.getJSONObject("view");
 			
+			InfoTarefa info = new InfoTarefa(tmp.getString("titulo"), tmp.getString("descricao"), tmp.getString("dataInicio"),
+											 tmp.getString("dataTermino"), tmp.getString("recursos"));
+			
+			next = new ViewTarefa(escritor, info, equipeName, projName);
+			notificar(null);
 		}
 	}
 
@@ -136,53 +143,59 @@ public class ListaTarefas extends JPanel implements ActionListener, INossoPanel,
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getActionCommand().equals("Visualizar")){
-			String fileName = list.getSelectedValue();
+			String taskName = list.getSelectedValue();
 			
-			if(fileName == null){
-				JOptionPane.showMessageDialog(this, "Eh preciso selecionar um arquivo antes.");
+			if(taskName == null){
+				JOptionPane.showMessageDialog(this, "Eh preciso selecionar uma tarefa antes.");
 				return;
 			}
 			
 			JSONObject packet = new JSONObject();
 			
 			HashMap<String, String> tmp = new HashMap<>();
-			tmp.put("titulo", fileName);
+			tmp.put("titulo", taskName);
 			tmp.put("equipe", equipeName);
+			tmp.put("projName", projName);
 			
-			packet.put("viewArquivo", tmp);
+			packet.put("viewTarefa", tmp);
 			
 			escritor.println(packet.toString());
 			escritor.flush();
 			
 		}else if(arg0.getActionCommand().equals("Voltar")){
-			next = new ListaEquipes(escritor);
+			next = new ListaProjs(escritor, equipeName);
 			
 			JSONObject packet = new JSONObject();
-			packet.put("listarEquipes", "");
+			
+			HashMap<String, String> tmp = new HashMap<>();
+			tmp.put("equipe", equipeName);
+			
+			packet.put("listarProjetos", tmp);
 			
 			escritor.println(packet.toString());
 			escritor.flush();
 			
-		}else if(arg0.getActionCommand().equals("Add Arquivo")){
-			next = new ViewFile(escritor, null, equipeName);
+		}else if(arg0.getActionCommand().equals("Add Tarefa")){
+			next = new ViewTarefa(escritor, null, equipeName, projName);
 			
 			notificar(null);
-		}else if(arg0.getActionCommand().equals("Remove Arquivo")){
-			String fileName = list.getSelectedValue();
+		}else if(arg0.getActionCommand().equals("Remove Tarefa")){
+			String TaskName = list.getSelectedValue();
 			
-			if(fileName == null){
-				JOptionPane.showMessageDialog(this, "Eh preciso selecionar um arquivo antes.");
+			if(TaskName == null){
+				JOptionPane.showMessageDialog(this, "Eh preciso selecionar uma tarefa antes.");
 				return;
 			}
 			
 			JSONObject packet = new JSONObject();
-			removedTaskName = fileName;
+			removedTaskName = TaskName;
 			
 			HashMap<String, String> tmp = new HashMap<>();
-			tmp.put("titulo", fileName);
+			tmp.put("titulo", TaskName);
+			tmp.put("projName", projName);
 			tmp.put("equipe", equipeName);
 			
-			packet.put("removeArquivo", tmp);
+			packet.put("removeTarefa", tmp);
 			
 			escritor.println(packet.toString());
 			escritor.flush();

@@ -50,6 +50,6 @@ public class Projeto {
 		if(!tarefas.containsKey(info.getTitulo()))
 			throw new Exception("Tarefa nao encontrada.");
 		
-		tarefas.get(info).modificarTarefa(info);
+		tarefas.get(info.getTitulo()).modificarTarefa(info);
 	}
 }

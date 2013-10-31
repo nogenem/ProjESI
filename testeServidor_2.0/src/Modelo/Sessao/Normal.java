@@ -14,10 +14,8 @@ public class Normal extends SessaoAbstrata {
 		super(user);
 	}
 	
-	public Set<String> listarTarefas(String projName) throws Exception{
-		if(getEquipe() == null)
-			throw new Exception("Usuario sem equipe.");
-		return getEquipe().listarTarefas(projName);
+	public Set<String> listarTarefas(Equipe equipe, String projName) throws Exception{
+		return equipe.listarTarefas(projName);
 	}
 	
 	public Set<String> listarProjetos(Equipe equipe) throws Exception{
@@ -48,9 +46,7 @@ public class Normal extends SessaoAbstrata {
 		equipe.modificarArquivo(info);
 	}
 	
-	public InfoTarefa visualizarTarefa(String titulo, String projName) throws Exception{
-		if(getEquipe() == null)
-			throw new Exception("Usuario sem equipe.");
-		return getEquipe().visualizarTarefa(titulo, projName);
+	public InfoTarefa visualizarTarefa(String titulo, Equipe equipe, String projName) throws Exception{
+		return equipe.visualizarTarefa(titulo, projName);
 	}
 }

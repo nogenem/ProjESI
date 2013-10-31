@@ -12,10 +12,8 @@ public class Administrador extends SessaoAbstrata {
 		super(user);
 	}
 
-	public Set<String> listarTarefas(String projName) throws Exception{
-		if(getEquipe() == null)
-			throw new Exception("Usuario sem equipe.");
-		return getEquipe().listarTarefas(projName);
+	public Set<String> listarTarefas(Equipe equipe, String projName) throws Exception{
+		return equipe.listarTarefas(projName);
 	}
 
 	public Set<String> listarProjetos(Equipe equipe) throws Exception{
@@ -46,28 +44,20 @@ public class Administrador extends SessaoAbstrata {
 		equipe.modificarArquivo(info);
 	}
 
-	public void adicionarTarefa(InfoTarefa info, String projName) throws Exception{
-		if(getEquipe() == null)
-			throw new Exception("Usuario sem equipe.");
-		getEquipe().adicionarTarefa(info, projName);
+	public void adicionarTarefa(InfoTarefa info, Equipe equipe, String projName) throws Exception{
+		equipe.adicionarTarefa(info, projName);
 	}
 
-	public void removerTarefa(String titulo, String projName) throws Exception{
-		if(getEquipe() == null)
-			throw new Exception("Usuario sem equipe.");
-		getEquipe().removerTarefa(titulo, projName);
+	public void removerTarefa(String titulo, Equipe equipe, String projName) throws Exception{
+		equipe.removerTarefa(titulo, projName);
 	}
 
-	public InfoTarefa visualizarTarefa(String titulo, String projName) throws Exception{
-		if(getEquipe() == null)
-			throw new Exception("Usuario sem equipe.");
-		return getEquipe().visualizarTarefa(titulo, projName);
+	public InfoTarefa visualizarTarefa(String titulo, Equipe equipe, String projName) throws Exception{
+		return equipe.visualizarTarefa(titulo, projName);
 	}
 
-	public void modificarTarefa(InfoTarefa info, String projName) throws Exception{
-		if(getEquipe() == null)
-			throw new Exception("Usuario sem equipe.");
-		getEquipe().modificarTarefa(info, projName);
+	public void modificarTarefa(InfoTarefa info, Equipe equipe, String projName) throws Exception{
+		equipe.modificarTarefa(info, projName);
 	}
 
 	public void adicionarMembro(Usuario user, Equipe equipe) throws Exception{

@@ -27,7 +27,7 @@ public abstract class SessaoAbstrata {
 		return user.getEquipe();
 	}
 	
-	public Set<String> listarTarefas(String projName) throws Exception{
+	public Set<String> listarTarefas(Equipe equipe, String projName) throws Exception{
 		throw new Exception("Usuario nao tem permissao para executar esta açao.");
 	}
 	
@@ -59,19 +59,19 @@ public abstract class SessaoAbstrata {
 		throw new Exception("Usuario nao tem permissao para executar esta açao.");
 	}
 	
-	public void adicionarTarefa(InfoTarefa info, String projName) throws Exception{
+	public void adicionarTarefa(InfoTarefa info, Equipe equipe, String projName) throws Exception{
 		throw new Exception("Usuario nao tem permissao para executar esta açao.");
 	}
 	
-	public void removerTarefa(String titulo, String projName) throws Exception{
+	public void removerTarefa(String titulo, Equipe equipe, String projName) throws Exception{
 		throw new Exception("Usuario nao tem permissao para executar esta açao.");
 	}
 	
-	public InfoTarefa visualizarTarefa(String titulo, String projName) throws Exception{
+	public InfoTarefa visualizarTarefa(String titulo, Equipe equipe, String projName) throws Exception{
 		throw new Exception("Usuario nao tem permissao para executar esta açao.");
 	}
 	
-	public void modificarTarefa(InfoTarefa info, String projName) throws Exception{
+	public void modificarTarefa(InfoTarefa info, Equipe equipe, String projName) throws Exception{
 		throw new Exception("Usuario nao tem permissao para executar esta açao.");
 	}
 	
