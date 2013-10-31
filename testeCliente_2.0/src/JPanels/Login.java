@@ -31,6 +31,8 @@ public class Login extends JPanel implements ActionListener, INossoPanel, Notifi
 
 	private JTextField tfLogin;
 	private JPasswordField pfSenha;
+	
+	private JButton btnLogar = new JButton("Logar");
 
 	public Login(PrintWriter escritor)
 	{
@@ -63,7 +65,6 @@ public class Login extends JPanel implements ActionListener, INossoPanel, Notifi
 		pfSenha.addKeyListener(this);
 		add(pfSenha);
 
-		JButton btnLogar = new JButton("Logar");
 		btnLogar.setMargin(new Insets(0, 0, 0, 0));
 		btnLogar.setBounds(10, 127, 73, 23);
 		btnLogar.addActionListener(this);
@@ -87,8 +88,10 @@ public class Login extends JPanel implements ActionListener, INossoPanel, Notifi
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		if(arg0.getActionCommand().equals("Logar")){
+	public void actionPerformed( ActionEvent arg0 )
+	{
+		if( arg0.getActionCommand().equals( "Logar" ) )
+		{
 			next = new ListaEquipes(escritor); //editar aki
 			
 			JSONObject packet = new JSONObject();
@@ -101,15 +104,19 @@ public class Login extends JPanel implements ActionListener, INossoPanel, Notifi
 
 			escritor.println(packet.toString());
 			escritor.flush();
-		}else if(arg0.getActionCommand().equals("Fechar")){
+		}
+		else if( arg0.getActionCommand().equals( "Fechar" ) )
+		{
 			JSONObject tmp = new JSONObject();
-			tmp.put("desconectar", "");
+			tmp.put( "desconectar", "" );
 
-			escritor.println(tmp.toString());
+			escritor.println( tmp.toString() );
 			escritor.flush();
 
 			System.exit(0);
-		}else if(arg0.getActionCommand().equals("Cadastrar")){
+		}
+		else if( arg0.getActionCommand().equals( "Cadastrar" ) )
+		{
 			next = new Cadastro(escritor); //muda o next para o cadastro
 			notificar(null); //notifica a GUI para mudar para o next, q sera o cadastro
 		}
@@ -142,18 +149,7 @@ public class Login extends JPanel implements ActionListener, INossoPanel, Notifi
 		{
 			if( arg0.getKeyCode() == KeyEvent.VK_ENTER)
 			{
-				next = new ListaEquipes(escritor); //editar aki
-				
-				JSONObject packet = new JSONObject();
-
-				HashMap<String, String> tmp = new HashMap<>();
-				tmp.put("login", tfLogin.getText());
-				tmp.put("senha", new String(pfSenha.getPassword()));
-
-				packet.put("logar", tmp);
-
-				escritor.println(packet.toString());
-				escritor.flush();
+				this.btnLogar.doClick();
 			}
 		}
 	}
