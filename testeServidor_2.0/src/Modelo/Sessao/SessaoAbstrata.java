@@ -28,79 +28,79 @@ public abstract class SessaoAbstrata {
 	}
 	
 	public Set<String> listarTarefas(String projName) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 	public Set<String> listarProjetos(Equipe equipe) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 	public Set<String> listarArquivos(Equipe equipe) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 	public Set<String> listarMembros(Equipe equipe) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 	public void adicionarArquivo(String titulo, String conteudo, Equipe equipe) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 	public void removerArquivo(String titulo, Equipe equipe) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 	public InfoArquivo visualizarArquivo(String titulo, Equipe equipe) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 	public void modificarArquivo(InfoArquivo info, Equipe equipe) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 	public void adicionarTarefa(InfoTarefa info, String projName) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 	public void removerTarefa(String titulo, String projName) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 	public InfoTarefa visualizarTarefa(String titulo, String projName) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 	public void modificarTarefa(InfoTarefa info, String projName) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 	public void adicionarMembro(Usuario user, Equipe equipe) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 	public void removerMembro(Usuario user, Equipe equipe) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 	public void adicionarProjeto(String projName, Equipe equipe) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 	public void removerProjeto(String projName, Equipe equipe) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 	public void adicionarEquipe(String equipeName) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 	public void removerEquipe(String equipeName) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 	public void modificarNivel(String login, int nivel) throws Exception{
-		throw new Exception("Usuario nao tem permissao para executar esta açao.");
+		throw new Exception("Usuario nao tem permissao para executar esta aÃ§ao.");
 	}
 	
 }
