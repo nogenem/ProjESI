@@ -1,5 +1,6 @@
 package Controle;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -27,6 +28,10 @@ public class Dados {
 		return admKey;
 	}
 	
+	public HashMap<String, Equipe> getEquipes(){
+		return equipes;
+	}
+	
 	/*
 	 * Retorna a instancia do Usuario pelo login fornecido.
 	 */
@@ -36,12 +41,20 @@ public class Dados {
 		return usuarios.get(login);
 	}
 	
+	/*
+	 * Retorna a instancia da Equipe pelo nome fornecido.
+	 * Caso nao encontre o nome da equipe, eh pq ela foi removida e o usuario
+	 * precisa deslogar para atualizar a sessao dele.
+	 */
 	public Equipe getEquipe(String equipeName) throws Exception{
 		if(!equipes.containsKey(equipeName))
-			throw new Exception("Equipe nao encontrado.");
+			throw new Exception("Equipe nao encontrada. Por favor, deslogue para atualizar seus status.");
 		return equipes.get(equipeName);
 	}
 	
+	/*
+	 * Efetua o login do usuario fazendo as devidas checagens antes.
+	 */
 	public Usuario efetuarLogin(String login, String senha) throws Exception{
 		if(usuarios.containsKey(login)){
 			Usuario user = usuarios.get(login);
@@ -52,19 +65,29 @@ public class Dados {
 				throw new Exception("Senha incorreta.");
 			
 			user.setOn(true); //Muda o estado do usuario para online
+			
+			//Checa se a equipe do usuario ainda eh valida
+			if(user.getEquipeName() != null && !equipes.containsKey(user.getEquipeName())) 
+				user.setEquipeName(null);
+			
 			return user;
 		}else{
 			throw new Exception("Usuario nao cadastrado.");
 		}
 	}
 	
+	/*
+	 * Coloca o nome usuario na lista de usuarios do servidor.
+	 */
 	public void cadastrarUsuario(Usuario user) throws Exception{
 		if(usuarios.containsKey(user.getLogin()))
 			throw new Exception("Usuario ja cadastrado.");
 		usuarios.put(user.getLogin(), user);
 	}
 	
-	/* Nao sei se fico muito bom isso mas... */
+	/*
+	 * Cria a sessao para o usuario, dependendo do nivel do mesmo.
+	 */
 	public SessaoAbstrata criarSessao(Usuario user){
 		SessaoAbstrata sessao = null;
 		
@@ -88,7 +111,7 @@ public class Dados {
 		equipes.remove(equipeName);
 	}
 	
-	public Set<String> listarEquipes(){ //eh necessario?
+	public Set<String> listarEquipes(){ 
 		Set<String> lista = equipes.keySet();
 		return lista;
 	}

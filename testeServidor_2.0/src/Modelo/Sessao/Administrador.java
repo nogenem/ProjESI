@@ -1,5 +1,6 @@
 package Modelo.Sessao;
 
+import java.util.HashMap;
 import java.util.Set;
 import Modelo.Equipe;
 import Modelo.Usuario;
@@ -26,6 +27,10 @@ public class Administrador extends SessaoAbstrata {
 	
 	public Set<String> listarMembros(Equipe equipe) throws Exception{
 		return equipe.listarMembros();
+	}
+	
+	public Set<String> listarEquipes(HashMap<String, Equipe> equipes) throws Exception{
+		return equipes.keySet();
 	}
 
 	public void adicionarArquivo(String titulo, String conteudo, Equipe equipe) throws Exception{

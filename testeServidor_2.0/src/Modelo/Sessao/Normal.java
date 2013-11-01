@@ -1,6 +1,8 @@
 package Modelo.Sessao;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import Modelo.Equipe;
@@ -28,6 +30,22 @@ public class Normal extends SessaoAbstrata {
 	
 	public Set<String> listarMembros(Equipe equipe) throws Exception{
 		return equipe.listarArquivos();
+	}
+	
+	public Set<String> listarEquipes(HashMap<String, Equipe> equipes) throws Exception{
+		Equipe myEquipe = null;
+		
+		Collection<Equipe> eqs = equipes.values();
+		for(Equipe e : eqs){
+			if(e.isMember(getUser()))
+				myEquipe = e;
+		}
+		
+		Set<String> volta = new HashSet<>();
+		if(myEquipe != null)
+			volta.add(myEquipe.getNome());
+		
+		return volta;
 	}
 	
 	public void adicionarArquivo(String titulo, String conteudo, Equipe equipe) throws Exception{

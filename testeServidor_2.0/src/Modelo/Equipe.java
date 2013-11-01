@@ -101,18 +101,18 @@ public class Equipe {
 	
 	public void adicionarMembro(Usuario user) throws Exception{
 		if(membros.containsKey(user.getLogin()))
-			throw new Exception("Usuario ja Ã© membro desta equipe.");
-		else if(user.getEquipe() != null)
-			throw new Exception("Usuario ja Ã© membro de uma equipe.");
+			throw new Exception("Usuario ja é membro desta equipe.");
+		else if(user.getEquipeName() != null)
+			throw new Exception("Usuario ja é membro de uma equipe.");
 		membros.put(user.getLogin(), user);
-		user.setEquipe(this);
+		user.setEquipeName(this.getNome());
 	}
 	
 	public void removerMembro(Usuario user) throws Exception{
 		if(!membros.containsKey(user.getLogin()))
 			throw new Exception("Usuario nao pertence a esta equipe.");
 		membros.remove(user.getLogin());
-		user.setEquipe(null);
+		user.setEquipeName(null);
 	}
 	
 	public void adicionarProjeto(String projName) throws Exception{

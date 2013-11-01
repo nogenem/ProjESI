@@ -1,5 +1,6 @@
 package Controle;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ public class Controle {
 	}
 	
 	/*
-	 * Retorna a key para criaÃ§ao de adms.
+	 * Retorna a key para criaçao de adms.
 	 */
 	public String getAdmKey(){
 		return dados.getAdmKey();
@@ -241,7 +242,7 @@ public class Controle {
 			Equipe equipe = dados.getEquipe(equipeName);
 			InfoArquivo info = sessao.visualizarArquivo(titulo, equipe);
 			
-			HashMap<String, String> tmp2 = new HashMap<String, String>();
+			HashMap<String, String> tmp2 = new HashMap<>();
 			tmp2.put("titulo", info.getTitulo());
 			tmp2.put("conteudo", info.getConteudo());
 			
@@ -434,7 +435,7 @@ public class Controle {
 		
 		packet = new JSONObject();
 		try{
-			sessao.adicionarEquipe(equipeName); //gambiarra soh vai deixar ADMs usarem essa funï¿½ao
+			sessao.adicionarEquipe(equipeName); //gambiarra soh vai deixar ADMs usarem essa funçao
 			dados.adicionarEquipe(equipeName);
 			packet.put("OK", "Equipe adicionada com sucesso.");
 		}catch(Exception e){
@@ -449,7 +450,7 @@ public class Controle {
 		
 		packet = new JSONObject();
 		try{
-			sessao.removerEquipe(equipeName); //gambiarra soh vai deixar ADMs usarem essa funï¿½ao
+			sessao.removerEquipe(equipeName); //gambiarra soh vai deixar ADMs usarem essa funçao
 			dados.removerEquipe(equipeName);
 			packet.put("OK", "Equipe removida com sucesso.");
 		}catch(Exception e){
@@ -461,7 +462,7 @@ public class Controle {
 	public JSONObject listarEquipes(JSONObject packet){
 		packet = new JSONObject();
 		try {
-			Set<String> equipes = dados.listarEquipes();
+			Set<String> equipes = sessao.listarEquipes(dados.getEquipes());
 			packet.put("lista", equipes);
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
@@ -488,10 +489,10 @@ public class Controle {
 		
 		packet = new JSONObject();
 		try {
-			sessao.modificarNivel(login, nivel); //gambiarra soh vai deixar ADMs usarem essa funï¿½ao
+			sessao.modificarNivel(login, nivel); //gambiarra soh vai deixar ADMs usarem essa funçao
 			Usuario user = dados.getUsuario(login);
 			user.setNivel(nivel);
-			packet.put("OK", "Nivel modificado com sucesso. O usuario tem que se desconectar para a mudanï¿½a ocorrer.");
+			packet.put("OK", "Nivel modificado com sucesso. O usuario tem que se desconectar para a mudança ocorrer.");
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
 		}
