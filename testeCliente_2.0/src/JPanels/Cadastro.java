@@ -23,7 +23,7 @@ public class Cadastro extends JPanel implements ActionListener, INossoPanel, Not
 
 	private Notificavel notificado;
 	private PrintWriter escritor;
-	private INossoPanel next; //Proximo conteudo
+	private INossoPanel next; //Proximo conteudo.
 
 	private JTextField tfKey;
 	private JTextField tfLogin;
@@ -35,10 +35,10 @@ public class Cadastro extends JPanel implements ActionListener, INossoPanel, Not
 	 */
 	public Cadastro(PrintWriter escritor){
 		this.escritor = escritor;
-		this.next = new Login(escritor); //Seta o next como o Login()
+		this.next = new Login(escritor); //Seta o next como o Login().
 
 		setLayout(null);
-		setSize(351, 339+30); //gambiarra hehe
+		setSize(351, 339+30);
 
 		JLabel lblCadastro = new JLabel("Cadastro");
 		lblCadastro.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -118,8 +118,8 @@ public class Cadastro extends JPanel implements ActionListener, INossoPanel, Not
 	}
 
 	@Override
-	public void parsePacket(JSONObject packet) {
-		//nao sera implementado nd aki
+	public void parsePacket(JSONObject packet) { //Trata os packets que vem do servidor.
+		//nao sera implementado nd aki.
 	}
 
 	@Override
@@ -128,7 +128,7 @@ public class Cadastro extends JPanel implements ActionListener, INossoPanel, Not
 	}
 
 	@Override
-	public void notificar(JSONObject packet) { //Notifica a GUI para mudar para o proximo conteudo
+	public void notificar(JSONObject packet) { //Notifica a GUI para mudar para o proximo conteudo.
 		notificado.serNotificado(packet);
 	}
 
@@ -155,7 +155,7 @@ public class Cadastro extends JPanel implements ActionListener, INossoPanel, Not
 			escritor.println(packet.toString());
 			escritor.flush();
 		}else if(arg0.getActionCommand().equals("Cancelar")){
-			notificar(null); //Faz mudar para o next, q sera o login
+			notificar(null); //Faz mudar para o next, q sera o login.
 		}
 	}
 }

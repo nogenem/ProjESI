@@ -5,6 +5,7 @@ import java.util.Set;
 import Modelo.Equipe;
 import Modelo.Usuario;
 import Modelo.Infos.InfoArquivo;
+import Modelo.Infos.InfoPostIt;
 import Modelo.Infos.InfoTarefa;
 
 public class Administrador extends SessaoAbstrata {
@@ -31,6 +32,10 @@ public class Administrador extends SessaoAbstrata {
 	
 	public Set<String> listarEquipes(HashMap<String, Equipe> equipes) throws Exception{
 		return equipes.keySet();
+	}
+	
+	public Set<String> listarPostIts(Equipe equipe) throws Exception{
+		return equipe.listarPostIts();
 	}
 
 	public void adicionarArquivo(String titulo, String conteudo, Equipe equipe) throws Exception{
@@ -91,5 +96,21 @@ public class Administrador extends SessaoAbstrata {
     
     public void modificarNivel(String login, int nivel) throws Exception{
 		//gambiarra
+	}
+    
+    public void adicionarPostIt(InfoPostIt info, Equipe equipe) throws Exception{
+		equipe.adicionarPostIt(info);
+	}
+	
+	public void removerPostIt(String titulo, Equipe equipe) throws Exception{
+		equipe.removerPostIt(titulo);
+	}
+	
+	public InfoPostIt visualizarPostIt(String titulo, Equipe equipe) throws Exception{
+		return equipe.visualizarPostIt(titulo);
+	}
+	
+	public void modificarPostIt(InfoPostIt info, Equipe equipe) throws Exception{
+		equipe.modificarPostIt(info);
 	}
 }

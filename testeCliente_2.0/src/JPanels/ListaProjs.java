@@ -1,13 +1,11 @@
 package JPanels;
 
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.util.HashMap;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -16,22 +14,21 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EtchedBorder;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import PP_Observer.Notificador;
 import PP_Observer.Notificavel;
 
+@SuppressWarnings("serial")
 public class ListaProjs extends JPanel implements ActionListener, INossoPanel, Notificador {
 
 	private Notificavel notificado;
 	private PrintWriter escritor;
-	private INossoPanel next; //Proximo conteudo
+	private INossoPanel next; //Proximo conteudo.
 	
-	private String equipeName;//nome da equipe q o projeto esta associado
-	private String newProjName;//nome do novo projeto a ser adicionado
-	private String removedProjName;//nome do projeto que sera removido
+	private String equipeName; //Nome da equipe para qual o projeto esta associado.
+	private String newProjName; //Nome do novo projeto a ser adicionado.
+	private String removedProjName; //Nome do projeto que sera removido.
 	
 	private JList<String> list;
 	private DefaultListModel<String> listaProjs = new DefaultListModel<>();  
@@ -41,7 +38,7 @@ public class ListaProjs extends JPanel implements ActionListener, INossoPanel, N
 		this.equipeName = equipeName;
 		
 		setLayout(null);
-		setSize(264+15, 342+30);
+		setSize(266+5, 340+25);
 		
 		JLabel lblListaDeProjs = new JLabel("Lista de projetos:");
 		lblListaDeProjs.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -98,8 +95,8 @@ public class ListaProjs extends JPanel implements ActionListener, INossoPanel, N
 	}
 
 	@Override
-	public void parsePacket(JSONObject packet) {
-		if(packet.has("lista")){ //lista de projetos vinda do servidor
+	public void parsePacket(JSONObject packet) { //Trata os packets que vem do servidor.
+		if(packet.has("lista")){ 
 			JSONArray array = packet.getJSONArray("lista");
 			if(array.length() == 0)
 				return;
@@ -108,13 +105,13 @@ public class ListaProjs extends JPanel implements ActionListener, INossoPanel, N
 				listaProjs.addElement(array.get(i).toString());
 
 			list.setSelectedIndex(0);
-		}else if(packet.has("OK")){ //confirmacao q um prjeto foi adicionado/removido com sucesso
+		}else if(packet.has("OK")){
 			String tmp = packet.getString("OK");
 			
-			if(tmp.contains("Projeto adicionado")){//ser for adicionado novo proj, add nova label na lista
+			if(tmp.contains("Projeto adicionado")){ //Caso o projeto tenha sido adicionado, eh preciso adicionar ele na lista.
 				listaProjs.addElement(newProjName);
 				list.setSelectedIndex(list.getLastVisibleIndex());
-			}else if(tmp.contains("Projeto removido")){//ser for removido um proj, remove uma label da lista
+			}else if(tmp.contains("Projeto removido")){ //Caso o projeto tenha sido removido, eh preciso retirar ele da lista.
 				listaProjs.removeElement(removedProjName);
 				list.setSelectedIndex(list.getLastVisibleIndex());
 			}
@@ -127,12 +124,12 @@ public class ListaProjs extends JPanel implements ActionListener, INossoPanel, N
 	}
 
 	@Override
-	public void notificar(JSONObject packet) {
+	public void notificar(JSONObject packet) { //Notifica a GUI para mudar para o proximo conteudo.
 		notificado.serNotificado(packet);
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
+	public void actionPerformed(ActionEvent arg0) { //Trata os eventos onClick do panel.
 		if(arg0.getActionCommand().equals("Listar Tarefas")){
 			String projName = list.getSelectedValue();
 			
@@ -172,7 +169,7 @@ public class ListaProjs extends JPanel implements ActionListener, INossoPanel, N
 				return;
 			}
 			
-			newProjName = projName;
+			newProjName = projName;  //Salva o nome do projeto para ser adicionado na lista depois.
 			JSONObject packet = new JSONObject();
 			
 			HashMap<String, String> tmp = new HashMap<>();
@@ -194,7 +191,7 @@ public class ListaProjs extends JPanel implements ActionListener, INossoPanel, N
 			int resposta = JOptionPane.showConfirmDialog(this, "Voce tem certeza que deseja remover o projeto: "+
 														toRemove +"?");
 			if(resposta == 0){
-				removedProjName = toRemove;
+				removedProjName = toRemove; //Salva o nome do projeto para ser removido da lista depois.
 				JSONObject packet = new JSONObject();
 				
 				HashMap<String, String> tmp = new HashMap<>();

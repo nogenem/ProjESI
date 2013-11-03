@@ -1,9 +1,7 @@
 package Controle;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
-
 import Modelo.Equipe;
 import Modelo.Usuario;
 import Modelo.Sessao.Administrador;
@@ -77,7 +75,7 @@ public class Dados {
 	}
 	
 	/*
-	 * Coloca o nome usuario na lista de usuarios do servidor.
+	 * Coloca o login do usuario na lista de usuarios do servidor.
 	 */
 	public void cadastrarUsuario(Usuario user) throws Exception{
 		if(usuarios.containsKey(user.getLogin()))

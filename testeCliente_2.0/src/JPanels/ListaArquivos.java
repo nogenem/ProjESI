@@ -1,13 +1,11 @@
 package JPanels;
 
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.util.HashMap;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -16,23 +14,21 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EtchedBorder;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import Infos.InfoArquivo;
 import PP_Observer.Notificador;
 import PP_Observer.Notificavel;
 
+@SuppressWarnings("serial")
 public class ListaArquivos extends JPanel implements ActionListener, INossoPanel, Notificador {
 
 	private Notificavel notificado;
 	private PrintWriter escritor;
-	private INossoPanel next; //Proximo conteudo
+	private INossoPanel next; //Proximo conteudo.
 	
-	private String equipeName;//nome da equipe q essa lista pertence
-	
-	private String removedFileName;//nome do arquivo que sera removido do projeto
+	private String equipeName; //Nome da equipe para qual essa lista pertence.	
+	private String removedFileName; //Nome do arquivo que sera removido da equipe.
 	
 	private JList<String> list;
 	private DefaultListModel<String> listaArquivos = new DefaultListModel<>();  
@@ -99,7 +95,7 @@ public class ListaArquivos extends JPanel implements ActionListener, INossoPanel
 	}
 
 	@Override
-	public void parsePacket(JSONObject packet) {
+	public void parsePacket(JSONObject packet) { //Trata os packets que vem do servidor.
 		if(packet.has("lista")){
 			JSONArray array = packet.getJSONArray("lista");
 			if(array.length() == 0)
@@ -112,13 +108,12 @@ public class ListaArquivos extends JPanel implements ActionListener, INossoPanel
 		}else if(packet.has("OK")){
 			String tmp = packet.getString("OK");
 			
-			if(tmp.contains("Arquivo removido")){
+			if(tmp.contains("Arquivo removido")){ //Caso o arquivo tenha sido removido, eh preciso retirar ele da lista.
 				listaArquivos.removeElement(removedFileName);
 				list.setSelectedIndex(list.getLastVisibleIndex());
 			}
 		}else if(packet.has("view")){
 			JSONObject tmp = packet.getJSONObject("view");
-			
 			InfoArquivo file = new InfoArquivo(tmp.getString("titulo"), tmp.getString("conteudo"));
 			
 			next = new ViewFile(escritor, file, equipeName);
@@ -132,12 +127,12 @@ public class ListaArquivos extends JPanel implements ActionListener, INossoPanel
 	}
 
 	@Override
-	public void notificar(JSONObject packet) {
+	public void notificar(JSONObject packet) { //Notifica a GUI para mudar para o proximo conteudo.
 		notificado.serNotificado(packet);
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
+	public void actionPerformed(ActionEvent arg0) { //Trata os eventos onClick do panel.
 		if(arg0.getActionCommand().equals("Visualizar")){
 			String fileName = list.getSelectedValue();
 			
@@ -178,17 +173,22 @@ public class ListaArquivos extends JPanel implements ActionListener, INossoPanel
 				return;
 			}
 			
-			JSONObject packet = new JSONObject();
-			removedFileName = fileName;
+			int resposta = JOptionPane.showConfirmDialog(this, "Voce tem certeza que deseja remover o arquivo: "+
+					fileName +"?");
 			
-			HashMap<String, String> tmp = new HashMap<>();
-			tmp.put("titulo", fileName);
-			tmp.put("equipe", equipeName);
-			
-			packet.put("removeArquivo", tmp);
-			
-			escritor.println(packet.toString());
-			escritor.flush();
+			if(resposta == 0){
+				JSONObject packet = new JSONObject();
+				removedFileName = fileName; //Salva o nome do arquivo para ser removido da lista depois.
+				
+				HashMap<String, String> tmp = new HashMap<>();
+				tmp.put("titulo", fileName);
+				tmp.put("equipe", equipeName);
+				
+				packet.put("removeArquivo", tmp);
+				
+				escritor.println(packet.toString());
+				escritor.flush();
+			}
 		}
 	}
 }

@@ -26,11 +26,11 @@ public class ViewTarefa extends JPanel implements ActionListener, INossoPanel, N
 
 	private Notificavel notificado;
 	private PrintWriter escritor;
-	private INossoPanel next; //Proximo conteudo
+	private INossoPanel next; //Proximo conteudo.
 	
 	private InfoTarefa info;
-	private String equipeName;
-	private String projName;
+	private String equipeName; //Nome da equipe para qual essa tarefa pertence.	
+	private String projName; //Nome do projeto para qual essa tarefa pertence.	
 	
 	private JTextField tfTitulo;
 	private JTextArea taDescricao;
@@ -52,7 +52,7 @@ public class ViewTarefa extends JPanel implements ActionListener, INossoPanel, N
 		add(lblTitulo);
 		
 		tfTitulo = new JTextField();
-		tfTitulo.setBounds(88, 23, 184, 20);
+		tfTitulo.setBounds(98, 23, 174, 20);
 		add(tfTitulo);
 		tfTitulo.setColumns(10);
 		
@@ -84,7 +84,7 @@ public class ViewTarefa extends JPanel implements ActionListener, INossoPanel, N
 		add(lblDataInicio);
 		
 		ftfInicio = new JFormattedTextField();
-		ftfInicio.setBounds(88, 54, 148, 20);
+		ftfInicio.setBounds(98, 54, 105, 20);
 		add(ftfInicio);
 		
 		JLabel lblDataTermino = new JLabel("Data Termino:");
@@ -92,7 +92,7 @@ public class ViewTarefa extends JPanel implements ActionListener, INossoPanel, N
 		add(lblDataTermino);
 		
 		ftfTermino = new JFormattedTextField();
-		ftfTermino.setBounds(88, 85, 148, 20);
+		ftfTermino.setBounds(98, 85, 105, 20);
 		add(ftfTermino);
 		
 		JLabel lblRecursos = new JLabel("Recursos:");
@@ -108,7 +108,7 @@ public class ViewTarefa extends JPanel implements ActionListener, INossoPanel, N
 		
 		MaskFormatter maskInicio;
 		MaskFormatter maskTermino;
-		try {
+		try { //Faz a formatacao dos campos de data.
 			maskInicio = new MaskFormatter("##/##/####");
 			maskInicio.setValidCharacters("0123456789");
 			maskInicio.setValueContainsLiteralCharacters(false);
@@ -119,7 +119,6 @@ public class ViewTarefa extends JPanel implements ActionListener, INossoPanel, N
 			maskTermino.setValueContainsLiteralCharacters(false);
 			maskTermino.install(ftfTermino);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -129,13 +128,9 @@ public class ViewTarefa extends JPanel implements ActionListener, INossoPanel, N
 			ftfTermino.setText(this.info.getDataTermino());
 			taDescricao.setText(this.info.getDescricao());
 			taRecursos.setText(this.info.getRecursos());
+			
 			tfTitulo.setEditable(false);
 		}
-	}
-	
-	@Override
-	public void notificar(JSONObject packet) {
-		notificado.serNotificado(packet);
 	}
 	
 	@Override
@@ -144,12 +139,12 @@ public class ViewTarefa extends JPanel implements ActionListener, INossoPanel, N
 	}
 	
 	@Override
-	public void parsePacket(JSONObject packet) {
-		if(packet != null && packet.has("OK")){ //confirmacao q uma tarefa foi adicionada/editada com sucesso
+	public void parsePacket(JSONObject packet) { //Trata os packets que vem do servidor.
+		if(packet != null && packet.has("OK")){ 
 			String tmp = packet.getString("OK");
 			
 			if(tmp.contains("Tarefa adicionada") || tmp.contains("Tarefa modificada")){
-				listaProjetos();
+				listaTarefas(); //Caso a tarefa tenha sido modificada/adicionada com sucesso, deve-se voltar para a lista de tarefas.
 			}
 		}
 	}
@@ -160,7 +155,12 @@ public class ViewTarefa extends JPanel implements ActionListener, INossoPanel, N
 	}
 	
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
+	public void notificar(JSONObject packet) { //Notifica a GUI para mudar para o proximo conteudo.
+		notificado.serNotificado(packet);
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent arg0) { //Trata os eventos onClick do panel.
 		if(arg0.getActionCommand().equals("Salvar")){
 			JSONObject packet = new JSONObject();
 			
@@ -182,11 +182,11 @@ public class ViewTarefa extends JPanel implements ActionListener, INossoPanel, N
 			escritor.flush();
 			
 		}else if(arg0.getActionCommand().equals("Voltar")){
-			listaProjetos();
+			listaTarefas();
 		}
 	}
 	
-	public void listaProjetos(){
+	public void listaTarefas(){
 		next = new ListaTarefas(escritor, equipeName, projName);
 		
 		JSONObject packet = new JSONObject();

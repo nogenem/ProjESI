@@ -2,13 +2,12 @@ package Modelo;
 
 import java.util.HashMap;
 import java.util.Set;
-
 import Modelo.Infos.InfoTarefa;
 
 public class Projeto {
 
 	private String nome;
-	private HashMap<String, Tarefa> tarefas;
+	private HashMap<String, Tarefa> tarefas; //Lista das tarefas que o projeto possui.
 	
 	public Projeto(String nome){
 		this.nome = nome;
@@ -42,14 +41,12 @@ public class Projeto {
 	public InfoTarefa visualizarTarefa(String titulo) throws Exception{
 		if(!tarefas.containsKey(titulo))
 			throw new Exception("Tarefa nao encontrada.");
-		
 		return tarefas.get(titulo).visualizarTarefa();
 	}
 	
 	public void modificarTarefa(InfoTarefa info) throws Exception{
 		if(!tarefas.containsKey(info.getTitulo()))
 			throw new Exception("Tarefa nao encontrada.");
-		
 		tarefas.get(info.getTitulo()).modificarTarefa(info);
 	}
 }

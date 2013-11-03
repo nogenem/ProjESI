@@ -1,13 +1,11 @@
 package JPanels;
 
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.util.HashMap;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -16,21 +14,20 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EtchedBorder;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import PP_Observer.Notificador;
 import PP_Observer.Notificavel;
 
+@SuppressWarnings("serial")
 public class ListaEquipes extends JPanel implements ActionListener, INossoPanel, Notificador {
 
 	private Notificavel notificado;
 	private PrintWriter escritor;
-	private INossoPanel next; //Proximo conteudo
+	private INossoPanel next; //Proximo conteudo.
 	
-	private String newTeamName;//nome da nova equipe a ser adicionada
-	private String removedTeamName;//nome da equipe que sera removida
+	private String newTeamName; //Nome da nova equipe a ser adicionada.
+	private String removedTeamName; //Nome da equipe que sera removida.
 	
 	private JList<String> list;
 	private DefaultListModel<String> listaEquipes = new DefaultListModel<>();  
@@ -39,7 +36,7 @@ public class ListaEquipes extends JPanel implements ActionListener, INossoPanel,
 		this.escritor = escritor;
 		
 		setLayout(null);
-		setSize(267+5, 376+30);
+		setSize(264+5, 406+25);
 		
 		JLabel lblListaDeEquipes = new JLabel("Lista de equipes:");
 		lblListaDeEquipes.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -75,13 +72,13 @@ public class ListaEquipes extends JPanel implements ActionListener, INossoPanel,
 		
 		JButton btnVoltar = new JButton("Voltar");
 		btnVoltar.setMargin(new Insets(0, 0, 0, 0));
-		btnVoltar.setBounds(142, 272, 104, 23);
+		btnVoltar.setBounds(84, 302, 104, 23);
 		btnVoltar.addActionListener(this);
 		add(btnVoltar);
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		panel.setBounds(10, 302, 247, 59);
+		panel.setBounds(10, 336, 247, 59);
 		add(panel);
 		panel.setLayout(null);
 		
@@ -100,6 +97,12 @@ public class ListaEquipes extends JPanel implements ActionListener, INossoPanel,
 		btnRemoveEquipe.setBounds(127, 25, 110, 23);
 		btnRemoveEquipe.addActionListener(this);
 		panel.add(btnRemoveEquipe);
+		
+		JButton btnListarPostits = new JButton("Listar Post-Its");
+		btnListarPostits.setMargin(new Insets(0, 0, 0, 0));
+		btnListarPostits.setBounds(142, 272, 104, 23);
+		btnListarPostits.addActionListener(this);
+		add(btnListarPostits);
 	}
 
 	@Override
@@ -108,8 +111,8 @@ public class ListaEquipes extends JPanel implements ActionListener, INossoPanel,
 	}
 
 	@Override
-	public void parsePacket(JSONObject packet) {
-		if(packet.has("lista")){ //lista de equipes vinda do servidor
+	public void parsePacket(JSONObject packet) { //Trata os packets que vem do servidor.
+		if(packet.has("lista")){ 
 			JSONArray array = packet.getJSONArray("lista");
 			if(array.length() == 0)
 				return;
@@ -118,13 +121,13 @@ public class ListaEquipes extends JPanel implements ActionListener, INossoPanel,
 				listaEquipes.addElement(array.get(i).toString());
 
 			list.setSelectedIndex(0);
-		}else if(packet.has("OK")){ //confirmacao q uma equipe foi adicionada/removida com sucesso
+		}else if(packet.has("OK")){ 
 			String tmp = packet.getString("OK");
 			
-			if(tmp.contains("Equipe adicionada")){//ser for adicionado nova equipe, add nova label na lista
+			if(tmp.contains("Equipe adicionada")){ //Caso a equipe tenha sido adicionada, eh preciso adicionar ela na lista.
 				listaEquipes.addElement(newTeamName);
 				list.setSelectedIndex(list.getLastVisibleIndex());
-			}else if(tmp.contains("Equipe removida")){//ser for removido uma equipe, remove uma label da lista
+			}else if(tmp.contains("Equipe removida")){ //Caso a equipe tenha sido removida, eh preciso retirar ela da lista.
 				listaEquipes.removeElement(removedTeamName);
 				list.setSelectedIndex(list.getLastVisibleIndex());
 			}
@@ -137,12 +140,12 @@ public class ListaEquipes extends JPanel implements ActionListener, INossoPanel,
 	}
 
 	@Override
-	public void notificar(JSONObject packet) {
+	public void notificar(JSONObject packet) { //Notifica a GUI para mudar para o proximo conteudo.
 		notificado.serNotificado(packet);
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
+	public void actionPerformed(ActionEvent arg0) { //Trata os eventos onClick do panel.
 		if(arg0.getActionCommand().equals("Listar Membros")){
 			String equipeName = list.getSelectedValue();
 			
@@ -199,9 +202,27 @@ public class ListaEquipes extends JPanel implements ActionListener, INossoPanel,
 			
 			packet.put("listarArquivos", tmp);
 			
-			escritor.println(packet.toString());
+			escritor.println(packet.toString()); 
 			escritor.flush();
 			
+		}else if(arg0.getActionCommand().equals("Listar Post-Its")){
+			String equipeName = list.getSelectedValue();
+			
+			if(equipeName == null){
+				JOptionPane.showMessageDialog(this, "Selecione uma equipe antes.");
+				return;
+			}
+			next = new ListaPostIt(escritor, equipeName);
+			
+			JSONObject packet = new JSONObject();
+			
+			HashMap<String, String> tmp = new HashMap<>();
+			tmp.put("equipe", equipeName);
+			
+			packet.put("listarPostIts", tmp);
+			
+			escritor.println(packet.toString());
+			escritor.flush();
 		}else if(arg0.getActionCommand().equals("Voltar")){
 			next = new Login(escritor);
 
@@ -220,7 +241,7 @@ public class ListaEquipes extends JPanel implements ActionListener, INossoPanel,
 				return;
 			}
 			
-			newTeamName = equipeName;
+			newTeamName = equipeName; //Salva o nome da equipe para ser adicionada na lista depois.
 			JSONObject packet = new JSONObject();
 			
 			HashMap<String, String> tmp = new HashMap<>();
@@ -241,7 +262,7 @@ public class ListaEquipes extends JPanel implements ActionListener, INossoPanel,
 			int resposta = JOptionPane.showConfirmDialog(this, "Voce tem certeza que deseja remover a equipe: "+
 														toRemove +"?");
 			if(resposta == 0){
-				removedTeamName = toRemove;
+				removedTeamName = toRemove; //Salva o nome da equipe para ser removida da lista depois.
 				JSONObject packet = new JSONObject();
 				
 				HashMap<String, String> tmp = new HashMap<>();

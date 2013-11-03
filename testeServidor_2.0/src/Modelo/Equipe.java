@@ -1,24 +1,25 @@
 package Modelo;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
-
 import Modelo.Infos.InfoArquivo;
+import Modelo.Infos.InfoPostIt;
 import Modelo.Infos.InfoTarefa;
 
 public class Equipe {
 
 	private String nome;
-	private HashMap<String, Arquivo> arquivos;
-	private HashMap<String, Projeto> projetos;
-	private HashMap<String, Usuario> membros;
+	private HashMap<String, Arquivo> arquivos; //Lista dos arquivos que a equipe possui.
+	private HashMap<String, Projeto> projetos; //Lista dos projetos que a equipe possui.
+	private HashMap<String, Usuario> membros; //Lista dos membros que a equipe possui.
+	private HashMap<String, PostIt> postIts; //Lista dos post-its que a equipe possui.
 
 	public Equipe(String nome){
 		this.nome = nome;
 		this.arquivos = new HashMap<>();
 		this.projetos = new HashMap<>();
 		this.membros = new HashMap<>();
+		this.postIts = new HashMap<>();
 	}
 	
 	public String getNome(){
@@ -35,6 +36,10 @@ public class Equipe {
 	
 	public Set<String> listarProjetos(){
 		return projetos.keySet();
+	}
+	
+	public Set<String> listarPostIts(){
+		return postIts.keySet();
 	}
 	
 	public Set<String> listarTarefas(String projName) throws Exception{
@@ -60,43 +65,37 @@ public class Equipe {
 	public InfoArquivo visualizarArquivo(String titulo) throws Exception{
 		if(!arquivos.containsKey(titulo))
 			throw new Exception("Arquivo nao encontrado.");
-		Arquivo tmp = arquivos.get(titulo);
-		return tmp.visualizarArquivo();
+		return arquivos.get(titulo).visualizarArquivo();
 	}
 
-	public void modificarArquivo(InfoArquivo info){
-		Arquivo tmp = arquivos.get(info.getTitulo());
-		tmp.modificarArquivo(info);
+	public void modificarArquivo(InfoArquivo info) throws Exception{
+		if(!arquivos.containsKey(info.getTitulo()))
+			throw new Exception("Arquivo nao encontrado.");
+		arquivos.get(info.getTitulo()).modificarArquivo(info);
 	}
 
 	public void adicionarTarefa(InfoTarefa info, String projName) throws Exception{
 		if(!projetos.containsKey(projName))
 			throw new Exception("Projeto nao encontrado.");
-		Projeto tmp = projetos.get(projName);
-		tmp.adicionarTarefa(info);
+		projetos.get(projName).adicionarTarefa(info);
 	}
 	
 	public void removerTarefa(String titulo, String projName) throws Exception{
 		if(!projetos.containsKey(projName))
 			throw new Exception("Projeto nao encontrado.");
-		
-		Projeto tmp = projetos.get(projName);
-		tmp.removerTarefa(titulo);
+		projetos.get(projName).removerTarefa(titulo);
 	}
 	
 	public InfoTarefa visualizarTarefa(String titulo, String projName) throws Exception{
 		if(!projetos.containsKey(projName))
 			throw new Exception("Projeto nao encontrado.");
-		
-		Projeto tmp = projetos.get(projName);
-		return tmp.visualizarTarefa(titulo);
+		return projetos.get(projName).visualizarTarefa(titulo);
 	}
 	
 	public void modificarTarefa(InfoTarefa info, String projName) throws Exception{
 		if(!projetos.containsKey(projName))
 			throw new Exception("Projeto nao encontrado.");
-		Projeto tmp = projetos.get(projName);
-		tmp.modificarTarefa(info);
+		projetos.get(projName).modificarTarefa(info);
 	}	
 	
 	public void adicionarMembro(Usuario user) throws Exception{
@@ -125,6 +124,30 @@ public class Equipe {
 		if(!projetos.containsKey(projName))
 			throw new Exception("Projeto nao encontrado.");
 		projetos.remove(projName);
+	}
+	
+	public void adicionarPostIt(InfoPostIt info) throws Exception{
+		if(postIts.containsKey(info.getTitulo()))
+			throw new Exception("Ja existe um post-it com esse nome.");		
+		postIts.put(info.getTitulo(), new PostIt(info));
+	}
+	
+	public void removerPostIt(String titulo) throws Exception{
+		if(!postIts.containsKey(titulo))
+			throw new Exception("Post-it nao encontrado.");	
+		postIts.remove(titulo);
+	}
+	
+	public InfoPostIt visualizarPostIt(String titulo) throws Exception{
+		if(!postIts.containsKey(titulo))
+			throw new Exception("Post-it nao encontrado.");
+		return postIts.get(titulo).visualizarPostIt();
+	}
+	
+	public void modificarPostIt(InfoPostIt info) throws Exception{
+		if(!postIts.containsKey(info.getTitulo()))
+			throw new Exception("Post-it nao encontrado.");
+		postIts.get(info.getTitulo()).modificarPostIt(info);
 	}
 	
 	public boolean isMember(Usuario user){

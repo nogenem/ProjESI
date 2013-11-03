@@ -1,14 +1,12 @@
 package Controle;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
-
 import org.json.JSONObject;
-
 import Modelo.Equipe;
 import Modelo.Usuario;
 import Modelo.Infos.InfoArquivo;
+import Modelo.Infos.InfoPostIt;
 import Modelo.Infos.InfoTarefa;
 import Modelo.Sessao.SessaoAbstrata;
 
@@ -50,6 +48,8 @@ public class Controle {
 			return listarProjetos(packet);
 		else if(packet.has("listarArquivos"))
 			return listarArquivos(packet);
+		else if(packet.has("listarPostIts"))
+			return listarPostIts(packet);
 		else if(packet.has("addArquivo"))
 			return adicionarArquivo(packet);
 		else if(packet.has("removeArquivo"))
@@ -78,16 +78,24 @@ public class Controle {
 			return adicionarEquipe(packet);
 		else if(packet.has("removeEquipe"))
 			return removerEquipe(packet);
-		else if(packet.has("changeNivel"))
+		else if(packet.has("changeNivel")) //fazer isso!
 			return modificarNivel(packet);
+		else if(packet.has("addPostIt"))
+			return adicionarPostIt(packet);
+		else if(packet.has("removePostIt"))
+			return removePostIt(packet);
+		else if(packet.has("viewPostIt"))
+			return visualizarPostIt(packet);
+		else if(packet.has("editPostIt"))
+			return modificarPostIt(packet);
 		
 		return null;
 	}
 	
 	public JSONObject efetuarLogin(JSONObject packet){
 		JSONObject tmp = packet.getJSONObject("logar");
-		String login = tmp.get("login").toString();
-		String senha = tmp.get("senha").toString();
+		String login = tmp.getString("login");
+		String senha = tmp.getString("senha");
 		
 		try{
 			Usuario user = dados.efetuarLogin(login, senha);
@@ -169,7 +177,7 @@ public class Controle {
 		return packet;
 	}
 	
-	public JSONObject listarArquivos(JSONObject packet){ //refazer isso
+	public JSONObject listarArquivos(JSONObject packet){ 
 		JSONObject tmp = packet.getJSONObject("listarArquivos");
 		String equipeName = tmp.getString("equipe");
 		
@@ -186,13 +194,28 @@ public class Controle {
 	
 	public JSONObject listarMembros(JSONObject packet){
 		JSONObject tmp = packet.getJSONObject("listarMembros");
-		String equipeName = tmp.get("equipe").toString();
+		String equipeName = tmp.getString("equipe");
 		
 		packet = new JSONObject();
 		try {
 			Equipe equipe = dados.getEquipe(equipeName);
 			Set<String> membros = sessao.listarMembros(equipe);
 			packet.put("lista", membros);
+		} catch (Exception e) {
+			packet.put("err", e.getMessage());
+		}
+		return packet;
+	}
+	
+	public JSONObject listarPostIts(JSONObject packet){
+		JSONObject tmp = packet.getJSONObject("listarPostIts");
+		String equipeName = tmp.getString("equipe");
+		
+		packet = new JSONObject();
+		try {
+			Equipe equipe = dados.getEquipe(equipeName);
+			Set<String> postIts = sessao.listarPostIts(equipe);
+			packet.put("lista", postIts);
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
 		}
@@ -492,10 +515,90 @@ public class Controle {
 			sessao.modificarNivel(login, nivel); //gambiarra soh vai deixar ADMs usarem essa funçao
 			Usuario user = dados.getUsuario(login);
 			user.setNivel(nivel);
-			packet.put("OK", "Nivel modificado com sucesso. O usuario tem que se desconectar para a mudança ocorrer.");
+			packet.put("OK", "Nivel modificado com sucesso. O usuario tem que se desconectar para a mudanca ocorrer.");
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
 		}
 		return packet;
 	}
+	
+	public JSONObject adicionarPostIt(JSONObject packet){
+		JSONObject tmp = packet.getJSONObject("addPostIt");
+		String titulo = tmp.getString("titulo");
+		String conteudo = tmp.getString("conteudo");
+		String equipeName = tmp.getString("equipe");
+		
+		packet = new JSONObject();
+		try{
+			Usuario user = sessao.getUser();
+			Equipe equipe = dados.getEquipe(equipeName);
+			InfoPostIt info = new InfoPostIt(titulo, conteudo, user.getLogin());
+			
+			sessao.adicionarPostIt(info, equipe);
+			packet.put("OK", "Post-it adicionado com sucesso.");
+		}catch (Exception e){
+			packet.put("err", e.getMessage());
+		}
+		return packet;
+	}
+	
+	public JSONObject removePostIt(JSONObject packet){
+		JSONObject tmp = packet.getJSONObject("removePostIt");
+		String titulo = tmp.getString("titulo");
+		String equipeName = tmp.getString("equipe");
+		
+		packet = new JSONObject();
+		try{
+			Equipe equipe = dados.getEquipe(equipeName);
+			
+			sessao.removerPostIt(titulo, equipe);
+			packet.put("OK", "Post-it removido com sucesso.");
+		}catch (Exception e){
+			packet.put("err", e.getMessage());
+		}
+		return packet;
+	}
+	
+	public JSONObject visualizarPostIt(JSONObject packet){
+		JSONObject tmp = packet.getJSONObject("viewPostIt");
+		String titulo = tmp.getString("titulo");
+		String equipeName = tmp.getString("equipe");
+		
+		packet = new JSONObject();
+		try{
+			Equipe equipe = dados.getEquipe(equipeName);	
+			InfoPostIt info = sessao.visualizarPostIt(titulo, equipe);
+			
+			HashMap<String, String> tmp2 = new HashMap<>();
+			tmp2.put("titulo", info.getTitulo());
+			tmp2.put("conteudo", info.getConteudo());
+			tmp2.put("emissor", info.getEmissor());
+			
+			packet.put("view", tmp2);
+		}catch (Exception e){
+			packet.put("err", e.getMessage());
+		}
+		return packet;
+	}
+
+	public JSONObject modificarPostIt(JSONObject packet){
+		JSONObject tmp = packet.getJSONObject("editPostIt");
+		String titulo = tmp.getString("titulo");
+		String conteudo = tmp.getString("conteudo");
+		String equipeName = tmp.getString("equipe");
+		
+		packet = new JSONObject();
+		try{
+			Usuario user = sessao.getUser();
+			Equipe equipe = dados.getEquipe(equipeName);
+			InfoPostIt info = new InfoPostIt(titulo, conteudo, user.getLogin());
+			
+			sessao.modificarPostIt(info, equipe);
+			packet.put("OK", "Post-it modificado com sucesso.");
+		}catch (Exception e){
+			packet.put("err", e.getMessage());
+		}
+		return packet;
+	}
+	
 }

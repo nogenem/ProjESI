@@ -16,43 +16,41 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EtchedBorder;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import Infos.InfoTarefa;
+import Infos.InfoPostIt;
 import PP_Observer.Notificador;
 import PP_Observer.Notificavel;
 
 @SuppressWarnings("serial")
-public class ListaTarefas extends JPanel implements ActionListener, INossoPanel, Notificador {
+public class ListaPostIt extends JPanel implements ActionListener, INossoPanel, Notificador {
 
 	private Notificavel notificado;
 	private PrintWriter escritor;
 	private INossoPanel next; //Proximo conteudo.
 	
 	private String equipeName; //Nome da equipe para qual essa lista pertence.
-	private String projName; //Nome do projeto para qual essa lista pertence.
-	private String removedTaskName; //Nome da tarefa que sera removida do projeto.
+	private String removedPostItName; //Nome do post-it que sera removido da equipe.
 	
 	private JList<String> list;
-	private DefaultListModel<String> listaTarefas = new DefaultListModel<>();  
+	private DefaultListModel<String> listaPostIts = new DefaultListModel<>();  
 	
-	public ListaTarefas(PrintWriter escritor, String equipeName, String projName){
+	public ListaPostIt(PrintWriter escritor, String equipeName){
 		this.escritor = escritor;
 		this.equipeName = equipeName;
-		this.projName = projName;
 		
 		setLayout(null);
-		setSize(270, 364+26);
+		setSize(270, 364+29);
 		
-		JLabel lblListaDeTarefas = new JLabel("Lista de tarefas:");
-		lblListaDeTarefas.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblListaDeTarefas.setBounds(10, 11, 128, 24);
-		add(lblListaDeTarefas);
+		JLabel lblListaDePostIts = new JLabel("Lista de post-its:");
+		lblListaDePostIts.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblListaDePostIts.setBounds(10, 11, 128, 24);
+		add(lblListaDePostIts);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(20, 43, 226, 184);
 		add(scrollPane);
 		
 		list = new JList<>();
-		list.setModel(listaTarefas);  
+		list.setModel(listaPostIts);  
         list.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION); 
 		scrollPane.setViewportView(list);
 		
@@ -78,17 +76,17 @@ public class ListaTarefas extends JPanel implements ActionListener, INossoPanel,
 		lblPainelDeAdm.setBounds(10, 0, 85, 14);
 		panel.add(lblPainelDeAdm);
 		
-		JButton btnAddTarefa = new JButton("Add Tarefa");
-		btnAddTarefa.setMargin(new Insets(0, 0, 0, 0));
-		btnAddTarefa.setBounds(10, 25, 114, 23);
-		btnAddTarefa.addActionListener(this);
-		panel.add(btnAddTarefa);
+		JButton btnAddPostIt = new JButton("Add Post-It");
+		btnAddPostIt.setMargin(new Insets(0, 0, 0, 0));
+		btnAddPostIt.setBounds(10, 25, 114, 23);
+		btnAddPostIt.addActionListener(this);
+		panel.add(btnAddPostIt);
 		
-		JButton btnRemoveTarefa = new JButton("Remove Tarefa");
-		btnRemoveTarefa.setMargin(new Insets(0, 0, 0, 0));
-		btnRemoveTarefa.setBounds(127, 25, 110, 23);
-		btnRemoveTarefa.addActionListener(this);
-		panel.add(btnRemoveTarefa);
+		JButton btnRemovePostIt = new JButton("Remove Post-It");
+		btnRemovePostIt.setMargin(new Insets(0, 0, 0, 0));
+		btnRemovePostIt.setBounds(127, 25, 110, 23);
+		btnRemovePostIt.addActionListener(this);
+		panel.add(btnRemovePostIt);
 	}
 
 	@Override
@@ -104,22 +102,21 @@ public class ListaTarefas extends JPanel implements ActionListener, INossoPanel,
 				return;
 	
 			for(int i = 0; i<array.length(); i++)
-				listaTarefas.addElement(array.get(i).toString());
+				listaPostIts.addElement(array.get(i).toString());
 
 			list.setSelectedIndex(0);
 		}else if(packet.has("OK")){
 			String tmp = packet.getString("OK");
 			
-			if(tmp.contains("Tarefa removida")){ //Caso a tarefa tenha sido removida, eh preciso retirar ela da lista.
-				listaTarefas.removeElement(removedTaskName);
+			if(tmp.contains("Post-it removido")){ //Caso o post-it tenha sido removido, eh preciso retirar ele da lista.
+				listaPostIts.removeElement(removedPostItName);
 				list.setSelectedIndex(list.getLastVisibleIndex());
 			}
 		}else if(packet.has("view")){
-			JSONObject tmp = packet.getJSONObject("view");		
-			InfoTarefa info = new InfoTarefa(tmp.getString("titulo"), tmp.getString("descricao"), tmp.getString("dataInicio"),
-											 tmp.getString("dataTermino"), tmp.getString("recursos"));
+			JSONObject tmp = packet.getJSONObject("view");
+			InfoPostIt postIt = new InfoPostIt(tmp.getString("titulo"), tmp.getString("conteudo"), tmp.getString("emissor"));
 			
-			next = new ViewTarefa(escritor, info, equipeName, projName);
+			next = new ViewPostIt(escritor, postIt, equipeName);
 			notificar(null);
 		}
 	}
@@ -137,63 +134,57 @@ public class ListaTarefas extends JPanel implements ActionListener, INossoPanel,
 	@Override
 	public void actionPerformed(ActionEvent arg0) { //Trata os eventos onClick do panel.
 		if(arg0.getActionCommand().equals("Visualizar")){
-			String taskName = list.getSelectedValue();
+			String postItName = list.getSelectedValue();
 			
-			if(taskName == null){
-				JOptionPane.showMessageDialog(this, "Eh preciso selecionar uma tarefa antes.");
+			if(postItName == null){
+				JOptionPane.showMessageDialog(this, "Eh preciso selecionar um post-it antes.");
 				return;
 			}
 			
 			JSONObject packet = new JSONObject();
 			
 			HashMap<String, String> tmp = new HashMap<>();
-			tmp.put("titulo", taskName);
+			tmp.put("titulo", postItName);
 			tmp.put("equipe", equipeName);
-			tmp.put("projName", projName);
 			
-			packet.put("viewTarefa", tmp);
+			packet.put("viewPostIt", tmp);
 			
 			escritor.println(packet.toString());
 			escritor.flush();
 			
 		}else if(arg0.getActionCommand().equals("Voltar")){
-			next = new ListaProjs(escritor, equipeName);
+			next = new ListaEquipes(escritor);
 			
 			JSONObject packet = new JSONObject();
-			
-			HashMap<String, String> tmp = new HashMap<>();
-			tmp.put("equipe", equipeName);
-			
-			packet.put("listarProjetos", tmp);
+			packet.put("listarEquipes", "");
 			
 			escritor.println(packet.toString());
 			escritor.flush();
 			
-		}else if(arg0.getActionCommand().equals("Add Tarefa")){
-			next = new ViewTarefa(escritor, null, equipeName, projName);
+		}else if(arg0.getActionCommand().equals("Add Post-It")){
+			next = new ViewPostIt(escritor, null, equipeName);
 			
 			notificar(null);
-		}else if(arg0.getActionCommand().equals("Remove Tarefa")){
-			String taskName = list.getSelectedValue();
+		}else if(arg0.getActionCommand().equals("Remove Post-It")){
+			String postItName = list.getSelectedValue();
 			
-			if(taskName == null){
-				JOptionPane.showMessageDialog(this, "Eh preciso selecionar uma tarefa antes.");
+			if(postItName == null){
+				JOptionPane.showMessageDialog(this, "Eh preciso selecionar um post-it antes.");
 				return;
 			}
 			
-			int resposta = JOptionPane.showConfirmDialog(this, "Voce tem certeza que deseja remover a tarefa: "+
-					taskName +"?");
+			int resposta = JOptionPane.showConfirmDialog(this, "Voce tem certeza que deseja remover o post-it: "+
+					postItName +"?");
 			
 			if(resposta == 0){
-				removedTaskName = taskName; //Salva o nome da tarefa para ser removida da lista depois.
+				removedPostItName = postItName; //Salva o nome da equipe para ser removida da lista depois.
 				JSONObject packet = new JSONObject();
 				
 				HashMap<String, String> tmp = new HashMap<>();
-				tmp.put("titulo", taskName);
-				tmp.put("projName", projName);
+				tmp.put("titulo", postItName);
 				tmp.put("equipe", equipeName);
 				
-				packet.put("removeTarefa", tmp);
+				packet.put("removePostIt", tmp);
 				
 				escritor.println(packet.toString());
 				escritor.flush();

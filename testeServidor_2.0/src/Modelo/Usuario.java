@@ -5,9 +5,9 @@ public class Usuario {
 	private String login;
 	private String senha;
 	private String nome;
-	private int nivel; /* Nivel de acesso do usuario. 0 = adm; 1 = normal; */
-	private boolean isOn; /* Variavel para checar se o usuario esta online no momento */
-	private String equipeName; /* Variavel para guardar o nome da equipe q o usuario pertence */
+	private int nivel; //Nivel de acesso do usuario. 0 = adm; 1 = normal; 
+	private boolean isOn; //Variavel para checar se o usuario esta online no momento. 
+	private String equipeName; //Variavel para guardar o nome da equipe q o usuario pertence. 
 	
 	public Usuario(String login, String senha){
 		this.login = login;
@@ -64,7 +64,6 @@ public class Usuario {
 	public void setOn(boolean isOn) {
 		this.isOn = isOn;
 	}
-	
 
 	public void setEquipeName(String equipeName){
 		this.equipeName = equipeName;

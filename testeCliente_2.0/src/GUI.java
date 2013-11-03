@@ -9,7 +9,6 @@ import JPanels.INossoPanel;
 import JPanels.Login;
 import PP_Observer.Notificavel;
 
-
 public class GUI implements Notificavel {
 	
 	private JFrame frmCliente;
@@ -72,10 +71,10 @@ public class GUI implements Notificavel {
 		if(current != null)
 			frmCliente.remove((Component) current);
 		
-		panel.parsePacket(packet);
 		current = panel;
-		panel.setarNotificavel(this);
-		JPanel p = (JPanel) panel;
+		current.parsePacket(packet);
+		current.setarNotificavel(this);
+		JPanel p = (JPanel) current;
 		frmCliente.getContentPane().add(p);
 		frmCliente.setSize(p.getSize());
 	}

@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-
 import Modelo.Equipe;
 import Modelo.Usuario;
 import Modelo.Infos.InfoArquivo;
+import Modelo.Infos.InfoPostIt;
 import Modelo.Infos.InfoTarefa;
 
 public class Normal extends SessaoAbstrata {
@@ -48,6 +48,10 @@ public class Normal extends SessaoAbstrata {
 		return volta;
 	}
 	
+	public Set<String> listarPostIts(Equipe equipe) throws Exception{
+		return equipe.listarPostIts();
+	}
+	
 	public void adicionarArquivo(String titulo, String conteudo, Equipe equipe) throws Exception{
 		equipe.adicionarArquivo(titulo, conteudo);
 	}
@@ -66,5 +70,21 @@ public class Normal extends SessaoAbstrata {
 	
 	public InfoTarefa visualizarTarefa(String titulo, Equipe equipe, String projName) throws Exception{
 		return equipe.visualizarTarefa(titulo, projName);
+	}
+	
+	public void adicionarPostIt(InfoPostIt info, Equipe equipe) throws Exception{
+		equipe.adicionarPostIt(info);
+	}
+	
+	public void removerPostIt(String titulo, Equipe equipe) throws Exception{
+		equipe.removerPostIt(titulo);
+	}
+	
+	public InfoPostIt visualizarPostIt(String titulo, Equipe equipe) throws Exception{
+		return equipe.visualizarPostIt(titulo);
+	}
+	
+	public void modificarPostIt(InfoPostIt info, Equipe equipe) throws Exception{
+		equipe.modificarPostIt(info);
 	}
 }
