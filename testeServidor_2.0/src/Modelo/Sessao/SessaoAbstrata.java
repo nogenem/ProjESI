@@ -2,6 +2,9 @@ package Modelo.Sessao;
 
 import java.util.HashMap;
 import java.util.Set;
+
+import org.json.JSONObject;
+
 import Modelo.Equipe;
 import Modelo.Usuario;
 import Modelo.Infos.InfoArquivo;
@@ -101,6 +104,10 @@ public abstract class SessaoAbstrata {
 	}
 	
 	public void removerEquipe(String equipeName) throws Exception{
+		throw new Exception("Voce nao tem permissao para executar esta açao.");
+	}
+	
+	public HashMap<String, Integer> getLoginsAndNiveis(HashMap<String, Usuario> usuarios) throws Exception{
 		throw new Exception("Voce nao tem permissao para executar esta açao.");
 	}
 	

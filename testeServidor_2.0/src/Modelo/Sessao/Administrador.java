@@ -1,7 +1,11 @@
 package Modelo.Sessao;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
+
+import org.json.JSONArray;
+
 import Modelo.Equipe;
 import Modelo.Usuario;
 import Modelo.Infos.InfoArquivo;
@@ -92,6 +96,17 @@ public class Administrador extends SessaoAbstrata {
 
     public void removerEquipe(String equipeName) throws Exception{
     	//gambiarra
+	}
+    
+    public HashMap<String, Integer> getLoginsAndNiveis(HashMap<String, Usuario> usuarios) throws Exception{
+		
+    	Collection<Usuario> users = usuarios.values();  
+    	HashMap<String, Integer> result = new HashMap<>();
+    	
+    	for(Usuario u : users){
+    		result.put(u.getLogin(), u.getNivel());
+    	}
+    	return result;
 	}
     
     public void modificarNivel(String login, int nivel) throws Exception{

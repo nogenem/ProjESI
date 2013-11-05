@@ -30,6 +30,10 @@ public class Dados {
 		return equipes;
 	}
 	
+	public HashMap<String, Usuario> getUsuarios(){
+		return usuarios;
+	}
+	
 	/*
 	 * Retorna a instancia do Usuario pelo login fornecido.
 	 */

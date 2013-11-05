@@ -36,7 +36,7 @@ public class ListaEquipes extends JPanel implements ActionListener, INossoPanel,
 		this.escritor = escritor;
 		
 		setLayout(null);
-		setSize(264+5, 406+25);
+		setSize(269, 437+25);
 		
 		JLabel lblListaDeEquipes = new JLabel("Lista de equipes:");
 		lblListaDeEquipes.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -78,7 +78,7 @@ public class ListaEquipes extends JPanel implements ActionListener, INossoPanel,
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		panel.setBounds(10, 336, 247, 59);
+		panel.setBounds(10, 336, 247, 92);
 		add(panel);
 		panel.setLayout(null);
 		
@@ -97,6 +97,12 @@ public class ListaEquipes extends JPanel implements ActionListener, INossoPanel,
 		btnRemoveEquipe.setBounds(127, 25, 110, 23);
 		btnRemoveEquipe.addActionListener(this);
 		panel.add(btnRemoveEquipe);
+		
+		JButton btnTrocaNivel = new JButton("Troca Nivel");
+		btnTrocaNivel.setMargin(new Insets(0, 0, 0, 0));
+		btnTrocaNivel.setBounds(66, 58, 114, 23);
+		btnTrocaNivel.addActionListener(this);
+		panel.add(btnTrocaNivel);
 		
 		JButton btnListarPostits = new JButton("Listar Post-Its");
 		btnListarPostits.setMargin(new Insets(0, 0, 0, 0));
@@ -273,6 +279,15 @@ public class ListaEquipes extends JPanel implements ActionListener, INossoPanel,
 				escritor.println(packet.toString());
 				escritor.flush();
 			}
+		}else if(arg0.getActionCommand().equals("Troca Nivel")){
+			next = new ChangeNivel(escritor);
+			
+			JSONObject packet = new JSONObject(); 
+			
+			packet.put("getNiveis", "");
+			
+			escritor.println(packet.toString());
+			escritor.flush();
 		}
 	}
 }

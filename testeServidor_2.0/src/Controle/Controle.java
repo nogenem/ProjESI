@@ -78,6 +78,8 @@ public class Controle {
 			return adicionarEquipe(packet);
 		else if(packet.has("removeEquipe"))
 			return removerEquipe(packet);
+		else if(packet.has("getNiveis"))
+			return getLoginsAndNiveis(packet);
 		else if(packet.has("changeNivel")) //fazer isso!
 			return modificarNivel(packet);
 		else if(packet.has("addPostIt"))
@@ -500,6 +502,17 @@ public class Controle {
 			Set<String> usuarios = dados.listarUsuarios();
 			packet.put("lista", usuarios);
 		} catch (Exception e) {
+			packet.put("err", e.getMessage());
+		}
+		return packet;
+	}
+	
+	public JSONObject getLoginsAndNiveis(JSONObject packet){ //Retorna os logins e niveis de todos os usuarios.
+		packet = new JSONObject();
+		try{
+			HashMap<String, Integer> result = sessao.getLoginsAndNiveis(dados.getUsuarios());
+			packet.put("lista", result);			
+		}catch(Exception e){
 			packet.put("err", e.getMessage());
 		}
 		return packet;
