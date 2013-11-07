@@ -14,16 +14,19 @@ public class Controle {
 	
 	private Dados dados;
 	private SessaoAbstrata sessao;
+	private String admKey;
 	
-	public Controle(Dados dados){
+	public Controle(Dados dados)
+	{
 		this.dados = dados;
+		admKey = "A15S-7S8Q-9GR1-Q7WF-96M2";
 	}
 	
 	/*
-	 * Retorna a key para criaçao de adms.
+	 * Retorna a key para criaï¿½ao de adms.
 	 */
 	public String getAdmKey(){
-		return dados.getAdmKey();
+		return admKey;
 	}
 	
 	/*
@@ -40,8 +43,6 @@ public class Controle {
 			return listarEquipes(packet);
 		else if(packet.has("listarMembros")) 
 			return listarMembros(packet);
-		else if(packet.has("listarUsuarios")) //eh preciso?
-			return listarUsuarios(packet);
 		else if(packet.has("listarTarefas"))
 			return listarTarefas(packet);
 		else if(packet.has("listarProjetos"))
@@ -99,10 +100,12 @@ public class Controle {
 		String login = tmp.getString("login");
 		String senha = tmp.getString("senha");
 		
-		try{
-			Usuario user = dados.efetuarLogin(login, senha);
+		try
+		{
+			Usuario user = dados.efetuarLogin( login, senha );
 			sessao = dados.criarSessao(user);
-		}catch(Exception e){
+		}catch(Exception e)
+		{
 			packet = new JSONObject();
 			packet.put("err", e.getMessage());
 			
@@ -390,11 +393,10 @@ public class Controle {
 		String equipeName = tmp.getString("equipe");
 		
 		packet = new JSONObject();
-		try {
-			Usuario user = dados.getUsuario(login);
-			Equipe equipe = dados.getEquipe(equipeName);
-			
-			sessao.adicionarMembro(user, equipe);
+		try
+		{
+			Equipe equipe = new Equipe( equipeName );
+			sessao.adicionarMembro( login, equipe );
 			packet.put("OK", "Usuario adicionado a equipe com sucesso.");
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
@@ -419,6 +421,7 @@ public class Controle {
 		}
 		return packet;
 	}
+	
 	
 	public JSONObject adicionarProjeto(JSONObject packet){
 		JSONObject tmp = packet.getJSONObject("addProj");
@@ -460,7 +463,7 @@ public class Controle {
 		
 		packet = new JSONObject();
 		try{
-			sessao.adicionarEquipe(equipeName); //gambiarra soh vai deixar ADMs usarem essa funçao
+			sessao.adicionarEquipe(equipeName); //gambiarra soh vai deixar ADMs usarem essa funï¿½ao
 			dados.adicionarEquipe(equipeName);
 			packet.put("OK", "Equipe adicionada com sucesso.");
 		}catch(Exception e){
@@ -475,7 +478,7 @@ public class Controle {
 		
 		packet = new JSONObject();
 		try{
-			sessao.removerEquipe(equipeName); //gambiarra soh vai deixar ADMs usarem essa funçao
+			sessao.removerEquipe(equipeName); //gambiarra soh vai deixar ADMs usarem essa funï¿½ao
 			dados.removerEquipe(equipeName);
 			packet.put("OK", "Equipe removida com sucesso.");
 		}catch(Exception e){
@@ -484,24 +487,16 @@ public class Controle {
 		return packet;
 	}
 	
-	public JSONObject listarEquipes(JSONObject packet){
+	public JSONObject listarEquipes(JSONObject packet)
+	{
 		packet = new JSONObject();
-		try {
-			Set<String> equipes = sessao.listarEquipes(dados.getEquipes());
+		try
+		{	
+			Set<String> equipes = sessao.listarEquipes();
 			packet.put("lista", equipes);
-		} catch (Exception e) {
-			packet.put("err", e.getMessage());
 		}
-		return packet;
-	}
-	
-	public JSONObject listarUsuarios(JSONObject packet){
-		packet = new JSONObject();
-		try {
-			//sessao.listarUsuarios();  //soh adm pode usar? eh necessaria?
-			Set<String> usuarios = dados.listarUsuarios();
-			packet.put("lista", usuarios);
-		} catch (Exception e) {
+		catch (Exception e)
+		{
 			packet.put("err", e.getMessage());
 		}
 		return packet;
@@ -525,7 +520,7 @@ public class Controle {
 		
 		packet = new JSONObject();
 		try {
-			sessao.modificarNivel(login, nivel); //gambiarra soh vai deixar ADMs usarem essa funçao
+			sessao.modificarNivel(login, nivel); //gambiarra soh vai deixar ADMs usarem essa funï¿½ao
 			Usuario user = dados.getUsuario(login);
 			user.setNivel(nivel);
 			packet.put("OK", "Nivel modificado com sucesso. O usuario tem que se desconectar para a mudanca ocorrer.");

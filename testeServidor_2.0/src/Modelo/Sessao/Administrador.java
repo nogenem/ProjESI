@@ -7,13 +7,14 @@ import java.util.Set;
 import org.json.JSONArray;
 
 import Modelo.Equipe;
+import Modelo.EquipeDao;
 import Modelo.Usuario;
 import Modelo.Infos.InfoArquivo;
 import Modelo.Infos.InfoPostIt;
 import Modelo.Infos.InfoTarefa;
 
 public class Administrador extends SessaoAbstrata {
-
+	
 	public Administrador(Usuario user){
 		super(user);
 	}
@@ -34,8 +35,8 @@ public class Administrador extends SessaoAbstrata {
 		return equipe.listarMembros();
 	}
 	
-	public Set<String> listarEquipes(HashMap<String, Equipe> equipes) throws Exception{
-		return equipes.keySet();
+	public Set<String> listarEquipes() throws Exception{
+		return this.equipeDao.listAllName();
 	}
 	
 	public Set<String> listarPostIts(Equipe equipe) throws Exception{
@@ -74,12 +75,12 @@ public class Administrador extends SessaoAbstrata {
 		equipe.modificarTarefa(info, projName);
 	}
 
-	public void adicionarMembro(Usuario user, Equipe equipe) throws Exception{
-		equipe.adicionarMembro(user);
+	public void adicionarMembro( String loginUsuario, Equipe equipe) throws Exception{
+		equipe.adicionarMembro( loginUsuario );
 	}
 
-	public void removerMembro(Usuario user, Equipe equipe) throws Exception{
-		equipe.removerMembro(user);
+	public void removerMembro( String loginUsuario, Equipe equipe) throws Exception{
+		equipe.removerMembro( loginUsuario );
 	}
 
 	public void adicionarProjeto(String projName, Equipe equipe) throws Exception{

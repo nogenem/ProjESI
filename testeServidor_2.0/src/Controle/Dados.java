@@ -1,9 +1,14 @@
 package Controle;
 
+import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Set;
+
 import Modelo.Equipe;
+import Modelo.EquipeDao;
 import Modelo.Usuario;
+import Modelo.Persistencia.ConexaoBanco;
+import Modelo.Persistencia.UsuarioDao;
 import Modelo.Sessao.Administrador;
 import Modelo.Sessao.Normal;
 import Modelo.Sessao.SessaoAbstrata;
@@ -22,10 +27,6 @@ public class Dados {
 		admKey = "A15S-7S8Q-9GR1-Q7WF-96M2";/* chave necessaria para criacao de um adm */
 	}
 	
-	public String getAdmKey(){
-		return admKey;
-	}
-	
 	public HashMap<String, Equipe> getEquipes(){
 		return equipes;
 	}
@@ -37,10 +38,10 @@ public class Dados {
 	/*
 	 * Retorna a instancia do Usuario pelo login fornecido.
 	 */
-	public Usuario getUsuario(String login) throws Exception{
-		if(!usuarios.containsKey(login))
-			throw new Exception("Usuario nao encontrado.");
-		return usuarios.get(login);
+	public Usuario getUsuario(String login) throws Exception
+	{
+		UsuarioDao usuarioDao = new UsuarioDao( new ConexaoBanco() , "USUARIO");
+		return usuarioDao.getUsuario(login);
 	}
 	
 	/*
@@ -48,78 +49,85 @@ public class Dados {
 	 * Caso nao encontre o nome da equipe, eh pq ela foi removida e o usuario
 	 * precisa deslogar para atualizar a sessao dele.
 	 */
-	public Equipe getEquipe(String equipeName) throws Exception{
-		if(!equipes.containsKey(equipeName))
-			throw new Exception("Equipe nao encontrada. Por favor, deslogue para atualizar seus status.");
-		return equipes.get(equipeName);
+	
+	public Equipe getEquipe(String equipeName) throws Exception
+	{
+		EquipeDao equipeDao = new EquipeDao( new ConexaoBanco() , "EQUIPE");
+		return equipeDao.getEquipe( equipeName );
 	}
 	
 	/*
 	 * Efetua o login do usuario fazendo as devidas checagens antes.
 	 */
-	public Usuario efetuarLogin(String login, String senha) throws Exception{
-		if(usuarios.containsKey(login)){
-			Usuario user = usuarios.get(login);
-			if(user.isOn())
-				throw new Exception("Usuario ja esta logado.");
-			
-			if(!user.confereSenha(senha))
-				throw new Exception("Senha incorreta.");
-			
-			user.setOn(true); //Muda o estado do usuario para online
-			
-			//Checa se a equipe do usuario ainda eh valida
-			if(user.getEquipeName() != null && !equipes.containsKey(user.getEquipeName())) 
-				user.setEquipeName(null);
-			
-			return user;
-		}else{
-			throw new Exception("Usuario nao cadastrado.");
+	public Usuario efetuarLogin(String login, String senha) throws Exception
+	{	
+		Usuario usuario = this.getUsuario(login);
+		if( usuario.confereSenha(senha) )
+		{
+			return usuario;
 		}
+		throw new Exception("Senha incorreta.");
 	}
 	
 	/*
 	 * Coloca o login do usuario na lista de usuarios do servidor.
 	 */
-	public void cadastrarUsuario(Usuario user) throws Exception{
-		if(usuarios.containsKey(user.getLogin()))
-			throw new Exception("Usuario ja cadastrado.");
-		usuarios.put(user.getLogin(), user);
+	public void cadastrarUsuario(Usuario user) throws Exception
+	{
+		
+		if( this.getUsuario( user.getLogin() ) == null )
+		{
+			UsuarioDao usuarioDao = new UsuarioDao( new ConexaoBanco(), "USUARIO" );
+			usuarioDao.inserirUsuario(user);
+			return;
+		}
+		throw new Exception("Usuario ja cadastrado.");
 	}
 	
 	/*
 	 * Cria a sessao para o usuario, dependendo do nivel do mesmo.
 	 */
-	public SessaoAbstrata criarSessao(Usuario user){
+	public SessaoAbstrata criarSessao(Usuario user)
+	{
 		SessaoAbstrata sessao = null;
 		
 		if(user.getNivel() == 0)
 			sessao = new Administrador(user);
 		else if(user.getNivel() == 1)
 			sessao = new Normal(user);
-		
 		return sessao;
 	}
 	
-	public void adicionarEquipe(String equipeName) throws Exception{
-		if(equipes.containsKey(equipeName))
+	public void adicionarEquipe(String equipeName) throws Exception
+	{
+		if( this.getEquipe( equipeName ) == null )
+		{
+			EquipeDao equipeDao = new EquipeDao( new ConexaoBanco(), "EQUIPE");
+			equipeDao.adicionarEquipe(equipeName);
+		}
+		else
+		{
 			throw new Exception("Equipe ja adicionada.");
-		equipes.put(equipeName, new Equipe(equipeName));
+		}
 	}
 	
-	public void removerEquipe(String equipeName) throws Exception{
-		if(!equipes.containsKey(equipeName))
+	public void removerEquipe(String equipeName) throws Exception
+	{
+		if( this.getEquipe( equipeName ) != null )
+		{
+			EquipeDao equipeDao = new EquipeDao( new ConexaoBanco(), "EQUIPE");
+			equipeDao.removeEquipe( equipeName );
+		}
+		else
+		{
 			throw new Exception("Equipe nao encontrada.");
-		equipes.remove(equipeName);
+		}
 	}
 	
-	public Set<String> listarEquipes(){ 
-		Set<String> lista = equipes.keySet();
-		return lista;
-	}
-	
-	public Set<String> listarUsuarios(){ //eh necessario?
-		Set<String> lista = usuarios.keySet();
+	public Set<String> listarEquipes()throws Exception
+	{ 
+		EquipeDao equipeDao = new EquipeDao( new ConexaoBanco(), "EQUIPE");
+		Set<String> lista = equipeDao.listAllName();
 		return lista;
 	}
 }

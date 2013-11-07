@@ -5,10 +5,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import Modelo.Equipe;
+import Modelo.EquipeDao;
 import Modelo.Usuario;
 import Modelo.Infos.InfoArquivo;
 import Modelo.Infos.InfoPostIt;
 import Modelo.Infos.InfoTarefa;
+import Modelo.Persistencia.ConexaoBanco;
 
 public class Normal extends SessaoAbstrata {
 	
@@ -32,14 +34,10 @@ public class Normal extends SessaoAbstrata {
 		return equipe.listarArquivos();
 	}
 	
-	public Set<String> listarEquipes(HashMap<String, Equipe> equipes) throws Exception{
-		Equipe myEquipe = null;
-		
-		Collection<Equipe> eqs = equipes.values();
-		for(Equipe e : eqs){
-			if(e.isMember(getUser()))
-				myEquipe = e;
-		}
+	public Set<String> listarEquipes() throws Exception
+	{
+		EquipeDao equipeDao = new EquipeDao( new ConexaoBanco(), "EQUIPE");
+		Equipe myEquipe = equipeDao.getEquipe( this.getUser().getIdEquipe() );
 		
 		Set<String> volta = new HashSet<>();
 		if(myEquipe != null)

@@ -1,27 +1,38 @@
 package Modelo;
-
 import java.util.HashMap;
 import java.util.Set;
+
 import Modelo.Infos.InfoArquivo;
 import Modelo.Infos.InfoPostIt;
 import Modelo.Infos.InfoTarefa;
+import Modelo.Persistencia.ConexaoBanco;
+import Modelo.Persistencia.UsuarioDao;
 
-public class Equipe {
-
+public class Equipe
+{
 	private String nome;
+	private int	   id;
+	private EquipeDao equipeDao;
 	private HashMap<String, Arquivo> arquivos; //Lista dos arquivos que a equipe possui.
 	private HashMap<String, Projeto> projetos; //Lista dos projetos que a equipe possui.
 	private HashMap<String, Usuario> membros; //Lista dos membros que a equipe possui.
 	private HashMap<String, PostIt> postIts; //Lista dos post-its que a equipe possui.
-
-	public Equipe(String nome){
+	
+	public Equipe( String nome ) throws Exception
+	{
+		EquipeDao equipeDao = new EquipeDao( new ConexaoBanco() , "EQUIPE");
+		this.id = equipeDao.getIdEquipe(nome);
 		this.nome = nome;
+		
 		this.arquivos = new HashMap<>();
 		this.projetos = new HashMap<>();
 		this.membros = new HashMap<>();
-		this.postIts = new HashMap<>();
+		this.postIts = new HashMap<>();	
 	}
-	
+	public void setId( int id )
+	{
+		this.id = id;
+	}
 	public String getNome(){
 		return nome;
 	}
@@ -98,23 +109,23 @@ public class Equipe {
 		projetos.get(projName).modificarTarefa(info);
 	}	
 	
-	public void adicionarMembro(Usuario user) throws Exception{
-		if(membros.containsKey(user.getLogin()))
-			throw new Exception("Usuario ja é membro desta equipe.");
-		else if(user.getEquipeName() != null)
-			throw new Exception("Usuario ja é membro de uma equipe.");
-		membros.put(user.getLogin(), user);
-		user.setEquipeName(this.getNome());
+	public void adicionarMembro( String loginUser ) throws Exception
+	{
+		/*
+		 * FAZRE VALIDAÃ‡Ã”ES . NÃ‚O PODE ADICIONAR A MESMA EQUIPE DUAS VZES
+		 */
+		UsuarioDao usuario = new UsuarioDao( new ConexaoBanco(), "USUARIO" );
+		usuario.adicionarEquipe( loginUser, this.id );
 	}
 	
-	public void removerMembro(Usuario user) throws Exception{
-		if(!membros.containsKey(user.getLogin()))
-			throw new Exception("Usuario nao pertence a esta equipe.");
-		membros.remove(user.getLogin());
-		user.setEquipeName(null);
+	public void removerMembro( String loginUser ) throws Exception
+	{
+		UsuarioDao usuario = new UsuarioDao( new ConexaoBanco(), "USUARIO" );
+		usuario.removerEquipe( loginUser );
 	}
 	
-	public void adicionarProjeto(String projName) throws Exception{
+	public void adicionarProjeto(String projName) throws Exception
+	{
 		if(projetos.containsKey(projName))
 			throw new Exception("Projeto ja existe.");
 		projetos.put(projName, new Projeto(projName));

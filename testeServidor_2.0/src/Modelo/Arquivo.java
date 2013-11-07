@@ -5,11 +5,13 @@ import Modelo.Infos.InfoArquivo;
 public class Arquivo {
 	private InfoArquivo info;
 	
-	public Arquivo(InfoArquivo info){
+	public Arquivo( InfoArquivo info )
+	{
 		this.info = info;
 	}
 	
-	public InfoArquivo visualizarArquivo(){
+	public InfoArquivo visualizarArquivo()
+	{
 		return info;
 	}
 	

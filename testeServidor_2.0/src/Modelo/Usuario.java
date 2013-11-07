@@ -7,15 +7,30 @@ public class Usuario {
 	private String nome;
 	private int nivel; //Nivel de acesso do usuario. 0 = adm; 1 = normal; 
 	private boolean isOn; //Variavel para checar se o usuario esta online no momento. 
-	private String equipeName; //Variavel para guardar o nome da equipe q o usuario pertence. 
+	private String equipeName; //Variavel para guardar o nome da equipe q o usuario pertence.
+	private int idEquipe;
 	
 	public Usuario(String login, String senha){
 		this.login = login;
 		this.senha = senha;
 		this.isOn = false;
 	}
+	public int getIdEquipe()
+	{
+		return this.idEquipe;
+	}
+	public void setIdEquipe( int idEquipe )
+	{
+		this.idEquipe = idEquipe;
+	}
 	
-	public Usuario(String login, String senha, String nome, int nivel){
+	public int getEquipe()
+	{
+		return this.idEquipe;
+	}
+	
+	public Usuario( String login, String senha, String nome, int nivel )
+	{
 		this.login = login;
 		this.senha = senha;
 		this.nome = nome;
