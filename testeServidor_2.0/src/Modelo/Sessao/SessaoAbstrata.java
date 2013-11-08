@@ -2,11 +2,9 @@ package Modelo.Sessao;
 
 import java.util.HashMap;
 import java.util.Set;
-
 import org.json.JSONObject;
-
 import Modelo.Equipe;
-import Modelo.EquipeDao;
+import Modelo.Persistencia.EquipeDao;
 import Modelo.Usuario;
 import Modelo.Infos.InfoArquivo;
 import Modelo.Infos.InfoPostIt;

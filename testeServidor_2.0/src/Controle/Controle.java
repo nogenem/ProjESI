@@ -23,7 +23,7 @@ public class Controle {
 	}
 	
 	/*
-	 * Retorna a key para cria�ao de adms.
+	 * Retorna a key para criaçao de adms.
 	 */
 	public String getAdmKey(){
 		return admKey;
