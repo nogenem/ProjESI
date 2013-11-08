@@ -1,12 +1,11 @@
 package Controle;
 
-import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Set;
+
 import Modelo.Equipe;
-import Modelo.Persistencia.EquipeDao;
 import Modelo.Usuario;
-import Modelo.Persistencia.ConexaoBanco;
+import Modelo.Persistencia.*;
 import Modelo.Persistencia.UsuarioDao;
 import Modelo.Sessao.Administrador;
 import Modelo.Sessao.Normal;

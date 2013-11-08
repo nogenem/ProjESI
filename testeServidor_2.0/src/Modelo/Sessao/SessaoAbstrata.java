@@ -2,14 +2,14 @@ package Modelo.Sessao;
 
 import java.util.HashMap;
 import java.util.Set;
-import org.json.JSONObject;
+
 import Modelo.Equipe;
-import Modelo.Persistencia.EquipeDao;
 import Modelo.Usuario;
 import Modelo.Infos.InfoArquivo;
 import Modelo.Infos.InfoPostIt;
 import Modelo.Infos.InfoTarefa;
 import Modelo.Persistencia.ConexaoBanco;
+import Modelo.Persistencia.EquipeDao;
 
 public abstract class SessaoAbstrata
 {	protected EquipeDao equipeDao;
