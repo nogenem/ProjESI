@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import Modelo.Equipe;
-import Modelo.EquipeDao;
+import Modelo.Persistencia.EquipeDao;
 import Modelo.Usuario;
 import Modelo.Infos.InfoArquivo;
 import Modelo.Infos.InfoPostIt;

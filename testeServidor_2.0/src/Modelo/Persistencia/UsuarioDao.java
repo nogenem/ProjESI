@@ -15,11 +15,7 @@ public class UsuarioDao extends Dao
 		super(c, tabela);
 	}
 
-	/*
-	 * ADICIONA ESSE USUARIO A EQUIPE
-	 */
-
-	public void adicionarEquipe( String login, int idEquipe )
+	public void adicionarEquipe( String login, int idEquipe ) throws Exception
 	{
 		HashMap<String, String> dados = new HashMap<>();
 		dados.put( "ID_EQUIPE" , ""+idEquipe );
@@ -51,11 +47,12 @@ public class UsuarioDao extends Dao
 		this.insert(dados);
 	}
 	
-	public Set<Usuario> listAll()throws Exception
+	public Set<Usuario> listAll() throws Exception
 	{
 		this.select("");
 		ResultSet result = this.getResultSet();
 		Set<Usuario> setReturn = new HashSet<>();
+		
 		while( result != null && result.next() )
 		{
 			Usuario user =  new Usuario( result.getString( "LOGIN" ) ,result.getString( "SENHA" ) );
@@ -70,8 +67,10 @@ public class UsuarioDao extends Dao
 	{
 		HashMap<String, String> condicoes = new HashMap<>();
 		condicoes.put( "LOGIN" , login );
+		
 		select( condicoes );
 		ResultSet result = getResultSet();
+		
 		if( result != null && result.next() )
 		{
 			Usuario user =  new Usuario( login ,result.getString( "SENHA" ) );

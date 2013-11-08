@@ -10,7 +10,7 @@ public class ConexaoBanco
 	private static Connection conexao;
 	private String host, login, senha,banco;
 	
-	public ConexaoBanco( String host,String banco, String login, String senha )
+	public ConexaoBanco( String host, String banco, String login, String senha )
 	{
 		this.host = host;
 		this.login = login;
@@ -41,7 +41,6 @@ public class ConexaoBanco
 	{
 		if( this.conexao != null )
 		{
-			System.out.println("Ja estava conectado");
 			return this.conexao;
 		}
 		this.newConexao( this.host, this.login, this.senha );

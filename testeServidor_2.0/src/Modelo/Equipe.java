@@ -1,11 +1,12 @@
 package Modelo;
+
 import java.util.HashMap;
 import java.util.Set;
-
 import Modelo.Infos.InfoArquivo;
 import Modelo.Infos.InfoPostIt;
 import Modelo.Infos.InfoTarefa;
 import Modelo.Persistencia.ConexaoBanco;
+import Modelo.Persistencia.EquipeDao;
 import Modelo.Persistencia.UsuarioDao;
 
 public class Equipe
@@ -29,10 +30,12 @@ public class Equipe
 		this.membros = new HashMap<>();
 		this.postIts = new HashMap<>();	
 	}
+	
 	public void setId( int id )
 	{
 		this.id = id;
 	}
+	
 	public String getNome(){
 		return nome;
 	}
