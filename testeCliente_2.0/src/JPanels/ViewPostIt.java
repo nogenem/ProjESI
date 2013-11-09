@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -123,6 +124,9 @@ public class ViewPostIt extends JPanel implements ActionListener, INossoPanel, N
 			
 			if(info != null && info.getConteudo().equals(taConteudo.getText())){
 				listaPostIts();  //Caso o usuario nao tenha modificado nada no post-it.
+				return;
+			}else if(this.tfTitulo.equals("")){
+				JOptionPane.showMessageDialog(this, "Titulo nao pode ficar em branco.");
 				return;
 			}
 

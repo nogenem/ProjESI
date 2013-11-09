@@ -1,28 +1,31 @@
 package Controle;
 
+import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Set;
-
 import Modelo.Equipe;
+import Modelo.Persistencia.EquipeDao;
 import Modelo.Usuario;
-import Modelo.Persistencia.*;
+import Modelo.Persistencia.ConexaoBanco;
 import Modelo.Persistencia.UsuarioDao;
 import Modelo.Sessao.Administrador;
 import Modelo.Sessao.Normal;
 import Modelo.Sessao.SessaoAbstrata;
 
 public class Dados {
+	private EquipeDao equipeDao;
+	private UsuarioDao usuarioDao;
+	
 	private HashMap<String, Usuario> usuarios;
 	private HashMap<String, Equipe> equipes;
-	private String admKey;
 	
 	public Dados(){
+		equipeDao = new EquipeDao(new ConexaoBanco(), "EQUIPE");
+		usuarioDao = new UsuarioDao(new ConexaoBanco(), "USUARIO");
+		
 		usuarios = new HashMap<>();
-		
 		usuarios.put("admin", new Usuario("admin", "admin", "mr. admin", 0));/* teste */
-		
 		equipes = new HashMap<>();
-		admKey = "A15S-7S8Q-9GR1-Q7WF-96M2";/* chave necessaria para criacao de um adm */
 	}
 	
 	public HashMap<String, Equipe> getEquipes(){
@@ -38,7 +41,6 @@ public class Dados {
 	 */
 	public Usuario getUsuario(String login) throws Exception
 	{
-		UsuarioDao usuarioDao = new UsuarioDao( new ConexaoBanco() , "USUARIO");
 		return usuarioDao.getUsuario(login);
 	}
 	
@@ -47,10 +49,8 @@ public class Dados {
 	 * Caso nao encontre o nome da equipe, eh pq ela foi removida e o usuario
 	 * precisa deslogar para atualizar a sessao dele.
 	 */
-	
 	public Equipe getEquipe(String equipeName) throws Exception
 	{
-		EquipeDao equipeDao = new EquipeDao( new ConexaoBanco() , "EQUIPE");
 		return equipeDao.getEquipe( equipeName );
 	}
 	
@@ -60,7 +60,11 @@ public class Dados {
 	public Usuario efetuarLogin(String login, String senha) throws Exception
 	{	
 		Usuario usuario = this.getUsuario(login);
-		if( usuario.confereSenha(senha) )
+		if( usuario == null )
+		{
+			throw new Exception("Usuario nao encontrado.");
+		}
+		else if( usuario.confereSenha(senha) )
 		{
 			return usuario;
 		}
@@ -75,8 +79,7 @@ public class Dados {
 		
 		if( this.getUsuario( user.getLogin() ) == null )
 		{
-			UsuarioDao usuarioDao = new UsuarioDao( new ConexaoBanco(), "USUARIO" );
-			usuarioDao.inserirUsuario(user);
+			usuarioDao.addUsuario(user);
 			return;
 		}
 		throw new Exception("Usuario ja cadastrado.");
@@ -100,8 +103,7 @@ public class Dados {
 	{
 		if( this.getEquipe( equipeName ) == null )
 		{
-			EquipeDao equipeDao = new EquipeDao( new ConexaoBanco(), "EQUIPE");
-			equipeDao.adicionarEquipe(equipeName);
+			equipeDao.add(equipeName);
 		}
 		else
 		{
@@ -113,8 +115,7 @@ public class Dados {
 	{
 		if( this.getEquipe( equipeName ) != null )
 		{
-			EquipeDao equipeDao = new EquipeDao( new ConexaoBanco(), "EQUIPE");
-			equipeDao.removeEquipe( equipeName );
+			equipeDao.remove( equipeName );
 		}
 		else
 		{
@@ -124,8 +125,6 @@ public class Dados {
 	
 	public Set<String> listarEquipes()throws Exception
 	{ 
-		EquipeDao equipeDao = new EquipeDao( new ConexaoBanco(), "EQUIPE");
-		Set<String> lista = equipeDao.listAllName();
-		return lista;
+		return equipeDao.list();
 	}
 }

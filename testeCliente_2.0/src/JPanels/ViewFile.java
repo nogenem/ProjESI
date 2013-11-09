@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -108,6 +109,9 @@ public class ViewFile extends JPanel implements ActionListener, INossoPanel, Not
 			
 			if(info != null && info.getConteudo().equals(textArea.getText())){
 				listaArquivos();  //Caso o usuario nao tenha modificado nada no arquivo.
+				return;
+			}else if(this.textField.equals("")){
+				JOptionPane.showMessageDialog(this, "O titulo nao pode ficar em branco.");
 				return;
 			}
 

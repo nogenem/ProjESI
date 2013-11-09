@@ -33,7 +33,7 @@ public class ConexaoBanco
 		this.host = "localhost";
 		this.banco = "GerenciamentoEquipe";
 		this.login = "root";
-		this.senha = "admin";
+		this.senha = "";
 		this.getConexao();
 	}
 	

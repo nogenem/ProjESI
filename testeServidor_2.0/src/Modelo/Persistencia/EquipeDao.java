@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import Modelo.Equipe;
+import Modelo.Infos.InfoPostIt;
 
 public class EquipeDao extends Dao
 {
@@ -13,7 +14,7 @@ public class EquipeDao extends Dao
 		super( c, tabela );
 	}	
 	
-	public int getIdEquipe( String nome ) throws Exception
+	public int getId( String nome ) throws Exception
 	{
 		HashMap<String, String> condicoes = new HashMap<>();
 		condicoes.put( "NOME" , nome );
@@ -28,7 +29,7 @@ public class EquipeDao extends Dao
 		throw new Exception("Equipe não encontrada");
 	}
 	
-	public void adicionarEquipe( String equipeName ) throws Exception
+	public void add( String equipeName ) throws Exception
 	{
 		HashMap<String, String> dados = new HashMap<>();
 		dados.put( "NOME" , equipeName );
@@ -36,7 +37,7 @@ public class EquipeDao extends Dao
 		insert(dados);
 	}
 	
-	public void removeEquipe( String equipeName ) throws Exception
+	public void remove( String equipeName ) throws Exception
 	{
 		HashMap<String, String> cond = new HashMap<>();
 		cond.put( "NOME" , equipeName );
@@ -44,24 +45,7 @@ public class EquipeDao extends Dao
 		delete(cond);
 	}
 	
-	public Equipe getEquipe( String equipeName ) throws Exception
-	{
-		HashMap<String, String> condicoes = new HashMap<>();
-		condicoes.put( "NOME" , equipeName );
-		
-		select( condicoes  );
-		
-		ResultSet result = getResultSet();
-		if( result != null && result.next() )
-		{
-			Equipe equipe = new Equipe( equipeName );
-			equipe.setId(result.getInt( "ID_EQUIPE" ));
-			return equipe;
-		}
-		return null;
-	}
-	
-	public Set<String> listAllName() throws Exception
+	public Set<String> list() throws Exception
 	{
 		this.select("");
 		ResultSet result = this.getResultSet();
@@ -86,6 +70,23 @@ public class EquipeDao extends Dao
 		{
 			Equipe equipe = new Equipe( result.getString("NOME") );
 			equipe.setId( idEquipe );
+			return equipe;
+		}
+		return null;
+	}
+	
+	public Equipe getEquipe( String equipeName ) throws Exception
+	{
+		HashMap<String, String> condicoes = new HashMap<>();
+		condicoes.put( "NOME" , equipeName );
+		
+		select( condicoes  );
+		
+		ResultSet result = getResultSet();
+		if( result != null && result.next() )
+		{
+			Equipe equipe = new Equipe( equipeName );
+			equipe.setId(result.getInt( "ID_EQUIPE" ));
 			return equipe;
 		}
 		return null;

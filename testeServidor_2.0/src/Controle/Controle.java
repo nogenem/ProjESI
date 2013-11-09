@@ -123,7 +123,7 @@ public class Controle {
 		int nivel = tmp.getString("key").equals(getAdmKey()) ? 0 : 1; //Retornar erro caso entre com a key errada?
 		
 		Usuario user = new Usuario(tmp.getString("login"), tmp.getString("senha"), 
-								   tmp.getString("nome"), nivel, false);
+								   tmp.getString("nome"), nivel);
 		
 		packet = new JSONObject();
 		try {
@@ -137,7 +137,7 @@ public class Controle {
 	
 	public JSONObject desconectar(JSONObject packet){
 		try{
-			sessao.getUser().desconectar(); //Por enquanto soh muda o 'isOn' da classe usuario.
+			sessao.getUser().desconectar();
 		}catch(Exception e){}
 		
 		if(packet.getString("desconectar").equals("sair")){//quando clicar no botao sair do menu principal
@@ -236,10 +236,16 @@ public class Controle {
 		packet = new JSONObject();
 		try {
 			Equipe equipe = dados.getEquipe(equipeName);
-			sessao.adicionarArquivo(titulo, conteudo, equipe);
+			
+			InfoArquivo info = new InfoArquivo(titulo, conteudo);
+			sessao.adicionarArquivo(info, equipe);
 			packet.put("OK", "Arquivo adicionado com sucesso.");
 		} catch (Exception e) {
-			packet.put("err", e.getMessage());
+			if(e.getMessage().contains("Duplicate entry")){
+				packet.put("err", "Ja existe um arquivo com esse titulo.");
+			}else{
+				packet.put("err", e.getMessage());
+			}
 		}
 		return packet;
 	}
@@ -316,7 +322,11 @@ public class Controle {
 			sessao.adicionarTarefa(info, equipe, projName);
 			packet.put("OK", "Tarefa adicionada com sucesso.");
 		} catch (Exception e) {
-			packet.put("err", e.getMessage());
+			if(e.getMessage().contains("Duplicate entry")){
+				packet.put("err", "Ja existe uma tarefa com esse nome.");
+			}else{
+				packet.put("err", e.getMessage());
+			}
 		}
 		return packet;
 	}
@@ -396,8 +406,12 @@ public class Controle {
 		try
 		{
 			Equipe equipe = new Equipe( equipeName );
-			sessao.adicionarMembro( login, equipe );
-			packet.put("OK", "Usuario adicionado a equipe com sucesso.");
+			if(dados.getUsuario(login) == null){
+				packet.put("err", "Usuario nao cadastrado.");
+			}else{				
+				sessao.adicionarMembro( login, equipe );
+				packet.put("OK", "Usuario adicionado a equipe com sucesso.");
+			}
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
 		}
@@ -411,10 +425,9 @@ public class Controle {
 		
 		packet = new JSONObject();
 		try {
-			Usuario user = dados.getUsuario(login);
 			Equipe equipe = dados.getEquipe(equipeName);
 			
-			sessao.removerMembro(user, equipe);
+			sessao.removerMembro(login, equipe);
 			packet.put("OK", "Usuario removido da equipe com sucesso.");
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
@@ -435,7 +448,11 @@ public class Controle {
 			sessao.adicionarProjeto(projName, equipe);
 			packet.put("OK", "Projeto adicionado com sucesso.");
 		}catch(Exception e){
-			packet.put("err", e.getMessage());
+			if(e.getMessage().contains("Duplicate entry")){
+				packet.put("err", "Ja existe um projeto com esse nome.");
+			}else{
+				packet.put("err", e.getMessage());
+			}
 		}
 		return packet;
 	}
@@ -467,7 +484,11 @@ public class Controle {
 			dados.adicionarEquipe(equipeName);
 			packet.put("OK", "Equipe adicionada com sucesso.");
 		}catch(Exception e){
-			packet.put("err", e.getMessage());
+			if(e.getMessage().contains("Duplicate entry")){
+				packet.put("err", "Ja existe uma equipe com esse nome.");
+			}else{
+				packet.put("err", e.getMessage());
+			}
 		}
 		return packet;
 	}
@@ -540,12 +561,16 @@ public class Controle {
 		try{
 			Usuario user = sessao.getUser();
 			Equipe equipe = dados.getEquipe(equipeName);
-			InfoPostIt info = new InfoPostIt(titulo, conteudo, user.getLogin());
+			InfoPostIt info = new InfoPostIt(titulo, conteudo, user.getIdUsuario());
 			
 			sessao.adicionarPostIt(info, equipe);
 			packet.put("OK", "Post-it adicionado com sucesso.");
 		}catch (Exception e){
-			packet.put("err", e.getMessage());
+			if(e.getMessage().contains("Duplicate entry")){
+				packet.put("err", "Ja existe um post-it com esse nome.");
+			}else{
+				packet.put("err", e.getMessage());
+			}
 		}
 		return packet;
 	}
@@ -580,7 +605,7 @@ public class Controle {
 			HashMap<String, String> tmp2 = new HashMap<>();
 			tmp2.put("titulo", info.getTitulo());
 			tmp2.put("conteudo", info.getConteudo());
-			tmp2.put("emissor", info.getEmissor());
+			tmp2.put("emissor", info.getLoginEmissor());
 			
 			packet.put("view", tmp2);
 		}catch (Exception e){
@@ -599,7 +624,7 @@ public class Controle {
 		try{
 			Usuario user = sessao.getUser();
 			Equipe equipe = dados.getEquipe(equipeName);
-			InfoPostIt info = new InfoPostIt(titulo, conteudo, user.getLogin());
+			InfoPostIt info = new InfoPostIt(titulo, conteudo, user.getIdUsuario());
 			
 			sessao.modificarPostIt(info, equipe);
 			packet.put("OK", "Post-it modificado com sucesso.");

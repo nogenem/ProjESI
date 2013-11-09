@@ -108,8 +108,10 @@ public class ListaMembros extends JPanel implements ActionListener, INossoPanel,
 			String tmp = packet.getString("OK");
 			
 			if(tmp.contains("Usuario adicionado")){ //Caso o usuario tenha sido adicionado, eh preciso adicionar ele na lista.
-				listaMembros.addElement(newMemberLogin);
-				list.setSelectedIndex(list.getLastVisibleIndex());
+				if(!listaMembros.contains(newMemberLogin)){
+					listaMembros.addElement(newMemberLogin);
+					list.setSelectedIndex(list.getLastVisibleIndex());
+				}
 			}else if(tmp.contains("Usuario removido")){ //Caso o usuario tenha sido removido, eh preciso retirar ele da lista.
 				listaMembros.removeElement(removedMemberLogin);
 				list.setSelectedIndex(list.getLastVisibleIndex());

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -162,6 +163,12 @@ public class ViewTarefa extends JPanel implements ActionListener, INossoPanel, N
 	@Override
 	public void actionPerformed(ActionEvent arg0) { //Trata os eventos onClick do panel.
 		if(arg0.getActionCommand().equals("Salvar")){
+			
+			if(this.tfTitulo.equals("")){
+				JOptionPane.showMessageDialog(this, "Titulo nao pode ficar em branco.");
+				return;
+			}
+			
 			JSONObject packet = new JSONObject();
 			
 			HashMap<String, String> tmp = new HashMap<>();

@@ -33,15 +33,15 @@ public class Administrador extends SessaoAbstrata {
 	}
 	
 	public Set<String> listarEquipes() throws Exception{
-		return this.equipeDao.listAllName();
+		return this.equipeDao.list();
 	}
 	
 	public Set<String> listarPostIts(Equipe equipe) throws Exception{
 		return equipe.listarPostIts();
 	}
 
-	public void adicionarArquivo(String titulo, String conteudo, Equipe equipe) throws Exception{
-		equipe.adicionarArquivo(titulo, conteudo);
+	public void adicionarArquivo(InfoArquivo info, Equipe equipe) throws Exception{
+		equipe.adicionarArquivo(info);
 	}
 
 	public void removerArquivo(String titulo, Equipe equipe) throws Exception{

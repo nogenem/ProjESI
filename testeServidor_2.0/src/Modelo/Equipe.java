@@ -2,11 +2,14 @@ package Modelo;
 
 import java.util.HashMap;
 import java.util.Set;
+
 import Modelo.Infos.InfoArquivo;
 import Modelo.Infos.InfoPostIt;
 import Modelo.Infos.InfoTarefa;
+import Modelo.Persistencia.ArquivoDao;
 import Modelo.Persistencia.ConexaoBanco;
 import Modelo.Persistencia.EquipeDao;
+import Modelo.Persistencia.PostitDao;
 import Modelo.Persistencia.UsuarioDao;
 
 public class Equipe
@@ -14,6 +17,10 @@ public class Equipe
 	private String nome;
 	private int	   id;
 	private EquipeDao equipeDao;
+	private PostitDao postitDao;
+	private UsuarioDao usuarioDao;
+	private ArquivoDao arquivoDao;
+	
 	private HashMap<String, Arquivo> arquivos; //Lista dos arquivos que a equipe possui.
 	private HashMap<String, Projeto> projetos; //Lista dos projetos que a equipe possui.
 	private HashMap<String, Usuario> membros; //Lista dos membros que a equipe possui.
@@ -22,8 +29,12 @@ public class Equipe
 	public Equipe( String nome ) throws Exception
 	{
 		EquipeDao equipeDao = new EquipeDao( new ConexaoBanco() , "EQUIPE");
-		this.id = equipeDao.getIdEquipe(nome);
+		this.id = equipeDao.getId(nome);
 		this.nome = nome;
+		
+		postitDao = new PostitDao(new ConexaoBanco(), "POSTIT");
+		usuarioDao = new UsuarioDao(new ConexaoBanco(), "USUARIO");
+		arquivoDao = new ArquivoDao(new ConexaoBanco(), "ARQUIVO");
 		
 		this.arquivos = new HashMap<>();
 		this.projetos = new HashMap<>();
@@ -40,20 +51,20 @@ public class Equipe
 		return nome;
 	}
 	
-	public Set<String> listarMembros(){
-		return membros.keySet();
+	public Set<String> listarMembros() throws Exception{
+		return usuarioDao.listMembers(this.id);
 	}
 	
-	public Set<String> listarArquivos(){
-		return arquivos.keySet();
+	public Set<String> listarArquivos() throws Exception{
+		return arquivoDao.list(this.id);
+	}
+	
+	public Set<String> listarPostIts() throws Exception{
+		return postitDao.list(this.id);
 	}
 	
 	public Set<String> listarProjetos(){
 		return projetos.keySet();
-	}
-	
-	public Set<String> listarPostIts(){
-		return postIts.keySet();
 	}
 	
 	public Set<String> listarTarefas(String projName) throws Exception{
@@ -63,29 +74,20 @@ public class Equipe
 		return proj.listarTarefas();
 	}
 	
-	public void adicionarArquivo(String titulo, String conteudo) throws Exception{
-		if(arquivos.containsKey(titulo))
-			throw new Exception("Arquivo ja adicionado.");
-		InfoArquivo info = new InfoArquivo(titulo, conteudo);
-		arquivos.put(titulo, new Arquivo(info));
+	public void adicionarArquivo(InfoArquivo info) throws Exception{
+		this.arquivoDao.add(info, id);
 	}
 	
 	public void removerArquivo(String titulo) throws Exception{
-		if(!arquivos.containsKey(titulo))
-			throw new Exception("Arquivo nao encontrado.");
-		arquivos.remove(titulo);
+		this.arquivoDao.remove(titulo);
 	}
 	
 	public InfoArquivo visualizarArquivo(String titulo) throws Exception{
-		if(!arquivos.containsKey(titulo))
-			throw new Exception("Arquivo nao encontrado.");
-		return arquivos.get(titulo).visualizarArquivo();
+		return this.arquivoDao.view(titulo);
 	}
 
 	public void modificarArquivo(InfoArquivo info) throws Exception{
-		if(!arquivos.containsKey(info.getTitulo()))
-			throw new Exception("Arquivo nao encontrado.");
-		arquivos.get(info.getTitulo()).modificarArquivo(info);
+		this.arquivoDao.edit(info, id);
 	}
 
 	public void adicionarTarefa(InfoTarefa info, String projName) throws Exception{
@@ -114,17 +116,14 @@ public class Equipe
 	
 	public void adicionarMembro( String loginUser ) throws Exception
 	{
-		/*
-		 * FAZRE VALIDAÇÔES . NÂO PODE ADICIONAR A MESMA EQUIPE DUAS VZES
-		 */
 		UsuarioDao usuario = new UsuarioDao( new ConexaoBanco(), "USUARIO" );
-		usuario.adicionarEquipe( loginUser, this.id );
+		usuario.addEquipe( loginUser, this.id );
 	}
 	
 	public void removerMembro( String loginUser ) throws Exception
 	{
 		UsuarioDao usuario = new UsuarioDao( new ConexaoBanco(), "USUARIO" );
-		usuario.removerEquipe( loginUser );
+		usuario.removeEquipe( loginUser );
 	}
 	
 	public void adicionarProjeto(String projName) throws Exception
@@ -141,27 +140,19 @@ public class Equipe
 	}
 	
 	public void adicionarPostIt(InfoPostIt info) throws Exception{
-		if(postIts.containsKey(info.getTitulo()))
-			throw new Exception("Ja existe um post-it com esse nome.");		
-		postIts.put(info.getTitulo(), new PostIt(info));
+		this.postitDao.add(info, this.id);
 	}
 	
 	public void removerPostIt(String titulo) throws Exception{
-		if(!postIts.containsKey(titulo))
-			throw new Exception("Post-it nao encontrado.");	
-		postIts.remove(titulo);
+		this.postitDao.remove(titulo);
 	}
 	
 	public InfoPostIt visualizarPostIt(String titulo) throws Exception{
-		if(!postIts.containsKey(titulo))
-			throw new Exception("Post-it nao encontrado.");
-		return postIts.get(titulo).visualizarPostIt();
+		return this.postitDao.view(titulo);
 	}
 	
 	public void modificarPostIt(InfoPostIt info) throws Exception{
-		if(!postIts.containsKey(info.getTitulo()))
-			throw new Exception("Post-it nao encontrado.");
-		postIts.get(info.getTitulo()).modificarPostIt(info);
+		this.postitDao.edit(info);
 	}
 	
 	public boolean isMember(Usuario user){

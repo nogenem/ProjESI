@@ -6,27 +6,13 @@ public class Usuario {
 	private String senha;
 	private String nome;
 	private int nivel; //Nivel de acesso do usuario. 0 = adm; 1 = normal; 
-	private boolean isOn; //Variavel para checar se o usuario esta online no momento. 
-	private String equipeName; //Variavel para guardar o nome da equipe q o usuario pertence.
+	
+	private int idUsuario;
 	private int idEquipe;
 	
 	public Usuario(String login, String senha){
 		this.login = login;
 		this.senha = senha;
-		this.isOn = false;
-	}
-	public int getIdEquipe()
-	{
-		return this.idEquipe;
-	}
-	public void setIdEquipe( int idEquipe )
-	{
-		this.idEquipe = idEquipe;
-	}
-	
-	public int getEquipe()
-	{
-		return this.idEquipe;
 	}
 	
 	public Usuario( String login, String senha, String nome, int nivel )
@@ -35,15 +21,6 @@ public class Usuario {
 		this.senha = senha;
 		this.nome = nome;
 		this.nivel = nivel;
-		this.isOn = false;
-	}
-	
-	public Usuario(String login, String senha, String nome, int nivel, boolean isOn){
-		this.login = login;
-		this.senha = senha;
-		this.nome = nome;
-		this.nivel = nivel;
-		this.isOn = isOn;
 	}
 	
 	public String getLogin() {
@@ -62,12 +39,24 @@ public class Usuario {
 		return nivel;
 	}
 	
-	public boolean isOn() {
-		return isOn;
+	public int getIdEquipe()
+	{
+		return this.idEquipe;
 	}
 	
-	public String getEquipeName(){
-		return equipeName;
+	public int getIdUsuario()
+	{
+		return this.idUsuario;
+	}
+	
+	public void setIdEquipe( int idEquipe )
+	{
+		this.idEquipe = idEquipe;
+	}
+	
+	public void setIdUsuario( int idUsuario )
+	{
+		this.idUsuario = idUsuario;
 	}
 	
 	public void setNivel(int nivel) throws Exception {
@@ -75,20 +64,12 @@ public class Usuario {
 			throw new Exception("Nivel invalido! Nivel 0 = Administrador, Nivel 1 = Usuario normal.");
 		this.nivel = nivel;
 	}
-	
-	public void setOn(boolean isOn) {
-		this.isOn = isOn;
-	}
 
-	public void setEquipeName(String equipeName){
-		this.equipeName = equipeName;
-	}
-	
 	public boolean confereSenha(String senha){
 		return this.senha.equals(senha);
 	}
 	
 	public void desconectar(){
-		setOn(false);
+		
 	}
 }

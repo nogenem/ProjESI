@@ -16,7 +16,7 @@ public abstract class Dao
 
 	protected String tabela 	 	 = null;
 
-	protected Dao( ConexaoBanco c, String tabela )
+	public Dao( ConexaoBanco c, String tabela )
 	{
 		this.conexao = c;
 		this.tabela = tabela;

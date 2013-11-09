@@ -2,14 +2,14 @@ package Modelo.Sessao;
 
 import java.util.HashMap;
 import java.util.Set;
-
+import org.json.JSONObject;
 import Modelo.Equipe;
+import Modelo.Persistencia.EquipeDao;
 import Modelo.Usuario;
 import Modelo.Infos.InfoArquivo;
 import Modelo.Infos.InfoPostIt;
 import Modelo.Infos.InfoTarefa;
 import Modelo.Persistencia.ConexaoBanco;
-import Modelo.Persistencia.EquipeDao;
 
 public abstract class SessaoAbstrata
 {	protected EquipeDao equipeDao;
@@ -52,7 +52,7 @@ public abstract class SessaoAbstrata
 		throw new Exception("Voce nao tem permissao para executar esta açao.");
 	}
 	
-	public void adicionarArquivo(String titulo, String conteudo, Equipe equipe) throws Exception{
+	public void adicionarArquivo(InfoArquivo info, Equipe equipe) throws Exception{
 		throw new Exception("Voce nao tem permissao para executar esta açao.");
 	}
 	
@@ -89,7 +89,7 @@ public abstract class SessaoAbstrata
 		throw new Exception("Voce nao tem permissao para executar esta açao.");
 	}
 	
-	public void removerMembro(Usuario user, Equipe equipe) throws Exception{
+	public void removerMembro(String loginUsuario, Equipe equipe) throws Exception{
 		throw new Exception("Voce nao tem permissao para executar esta açao.");
 	}
 	
