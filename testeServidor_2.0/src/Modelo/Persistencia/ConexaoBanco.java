@@ -52,7 +52,6 @@ public class ConexaoBanco
 		try
 		{
 			this.conexao = DriverManager.getConnection( "jdbc:mysql://"+this.host+"/"+this.banco, this.login, this.senha );
-			System.out.println("Conetado!!");
 		}
 		catch( Exception e )
 		{

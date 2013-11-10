@@ -10,36 +10,29 @@ import Modelo.Persistencia.ArquivoDao;
 import Modelo.Persistencia.ConexaoBanco;
 import Modelo.Persistencia.EquipeDao;
 import Modelo.Persistencia.PostitDao;
+import Modelo.Persistencia.ProjetoDao;
+import Modelo.Persistencia.TarefaDao;
 import Modelo.Persistencia.UsuarioDao;
 
 public class Equipe
 {
 	private String nome;
 	private int	   id;
-	private EquipeDao equipeDao;
 	private PostitDao postitDao;
 	private UsuarioDao usuarioDao;
 	private ArquivoDao arquivoDao;
-	
-	private HashMap<String, Arquivo> arquivos; //Lista dos arquivos que a equipe possui.
-	private HashMap<String, Projeto> projetos; //Lista dos projetos que a equipe possui.
-	private HashMap<String, Usuario> membros; //Lista dos membros que a equipe possui.
-	private HashMap<String, PostIt> postIts; //Lista dos post-its que a equipe possui.
+	private ProjetoDao projetoDao;
+	private TarefaDao tarefaDao;
 	
 	public Equipe( String nome ) throws Exception
 	{
-		EquipeDao equipeDao = new EquipeDao( new ConexaoBanco() , "EQUIPE");
-		this.id = equipeDao.getId(nome);
 		this.nome = nome;
 		
 		postitDao = new PostitDao(new ConexaoBanco(), "POSTIT");
 		usuarioDao = new UsuarioDao(new ConexaoBanco(), "USUARIO");
 		arquivoDao = new ArquivoDao(new ConexaoBanco(), "ARQUIVO");
-		
-		this.arquivos = new HashMap<>();
-		this.projetos = new HashMap<>();
-		this.membros = new HashMap<>();
-		this.postIts = new HashMap<>();	
+		projetoDao = new ProjetoDao(new ConexaoBanco(), "PROJETO");
+		tarefaDao = new TarefaDao(new ConexaoBanco(), "TAREFA");
 	}
 	
 	public void setId( int id )
@@ -63,99 +56,162 @@ public class Equipe
 		return postitDao.list(this.id);
 	}
 	
-	public Set<String> listarProjetos(){
-		return projetos.keySet();
+	public Set<String> listarProjetos() throws Exception{
+		return projetoDao.list();
 	}
 	
 	public Set<String> listarTarefas(String projName) throws Exception{
-		if(!projetos.containsKey(projName))
+		Projeto proj = projetoDao.getProj(projName, this.id);
+		if(proj == null)
 			throw new Exception("Projeto nao encontrado.");
-		Projeto proj = projetos.get(projName);
-		return proj.listarTarefas();
+		return tarefaDao.list(proj.getIdProj());
 	}
 	
 	public void adicionarArquivo(InfoArquivo info) throws Exception{
+		if( arquivoDao.exist(info.getTitulo(), this.id) )
+			throw new Exception("Ja existe um arquivo com esse titulo em sua equipe.");
 		this.arquivoDao.add(info, id);
 	}
 	
 	public void removerArquivo(String titulo) throws Exception{
-		this.arquivoDao.remove(titulo);
+		if( !arquivoDao.exist(titulo, this.id) )
+			throw new Exception("Arquivo nao encontrado.");
+		this.arquivoDao.remove(titulo, this.id);
 	}
 	
 	public InfoArquivo visualizarArquivo(String titulo) throws Exception{
-		return this.arquivoDao.view(titulo);
+		if( !arquivoDao.exist(titulo, this.id) )
+			throw new Exception("Arquivo nao encontrado.");
+		
+		InfoArquivo info = this.arquivoDao.view(titulo, this.id);
+		
+		if( info == null )
+			throw new Exception("Arquivo nao encontrado.");
+		
+		return info;
 	}
 
 	public void modificarArquivo(InfoArquivo info) throws Exception{
+		if( !arquivoDao.exist(info.getTitulo(), this.id) )
+			throw new Exception("Arquivo nao encontrado.");
 		this.arquivoDao.edit(info, id);
 	}
 
 	public void adicionarTarefa(InfoTarefa info, String projName) throws Exception{
-		if(!projetos.containsKey(projName))
+		Projeto proj = projetoDao.getProj(projName, this.id);
+		if(proj == null)
 			throw new Exception("Projeto nao encontrado.");
-		projetos.get(projName).adicionarTarefa(info);
+		else if( tarefaDao.exist(info.getTitulo(), proj.getIdProj()) )
+			throw new Exception("Ja existe uma tarefa com esse titulo no seu projeto.");
+		
+		info.setIdProjeto(proj.getIdProj());
+		tarefaDao.add(info);
 	}
 	
 	public void removerTarefa(String titulo, String projName) throws Exception{
-		if(!projetos.containsKey(projName))
+		Projeto proj = projetoDao.getProj(projName, this.id);
+		if(proj == null)
 			throw new Exception("Projeto nao encontrado.");
-		projetos.get(projName).removerTarefa(titulo);
+		else if( !tarefaDao.exist(titulo, proj.getIdProj()) )
+			throw new Exception("Tarefa nao encontrada.");
+		
+		tarefaDao.remove(titulo, proj.getIdProj());
 	}
 	
 	public InfoTarefa visualizarTarefa(String titulo, String projName) throws Exception{
-		if(!projetos.containsKey(projName))
+		Projeto proj = projetoDao.getProj(projName, this.id);
+		if(proj == null)
 			throw new Exception("Projeto nao encontrado.");
-		return projetos.get(projName).visualizarTarefa(titulo);
+		
+		InfoTarefa info = tarefaDao.getTarefa(titulo, proj.getIdProj());
+		
+		if(info == null)
+			throw new Exception("Tarefa nao encontrada.");
+		
+		return info;
 	}
 	
 	public void modificarTarefa(InfoTarefa info, String projName) throws Exception{
-		if(!projetos.containsKey(projName))
+		Projeto proj = projetoDao.getProj(projName, this.id);
+		if(proj == null)
 			throw new Exception("Projeto nao encontrado.");
-		projetos.get(projName).modificarTarefa(info);
+		else if( !tarefaDao.exist(info.getTitulo(), proj.getIdProj()) )
+			throw new Exception("Tarefa nao encontrada.");
+		
+		info.setIdProjeto(proj.getIdProj());
+		tarefaDao.edit(info);
 	}	
 	
 	public void adicionarMembro( String loginUser ) throws Exception
 	{
-		UsuarioDao usuario = new UsuarioDao( new ConexaoBanco(), "USUARIO" );
-		usuario.addEquipe( loginUser, this.id );
+		Usuario user = usuarioDao.getUsuario(loginUser);
+		if( user == null )
+			throw new Exception("Usuario nao encontrado.");
+		else if( user.getIdEquipe() == this.id )
+			throw new Exception("Usuario ja é membro dessa equipe.");
+		
+		usuarioDao.addEquipe( loginUser, this.id );
 	}
 	
 	public void removerMembro( String loginUser ) throws Exception
 	{
-		UsuarioDao usuario = new UsuarioDao( new ConexaoBanco(), "USUARIO" );
-		usuario.removeEquipe( loginUser );
+		Usuario user = usuarioDao.getUsuario(loginUser);
+		if( user == null )
+			throw new Exception("Usuario nao encontrado.");
+		else if( user.getIdEquipe() != this.id )
+			throw new Exception("Usuario nao é membro desta equipe.");
+		
+		usuarioDao.removeEquipe( loginUser );
 	}
 	
 	public void adicionarProjeto(String projName) throws Exception
 	{
-		if(projetos.containsKey(projName))
-			throw new Exception("Projeto ja existe.");
-		projetos.put(projName, new Projeto(projName));
+		if( projetoDao.exist(projName, this.id) )
+			throw new Exception("Ja existe um projeto com esse nome nesta equipe.");
+		projetoDao.add(projName, this.id);
 	}
 	
 	public void removerProjeto(String projName) throws Exception{
-		if(!projetos.containsKey(projName))
+		Projeto proj = projetoDao.getProj(projName, this.id);
+		if( proj == null )
 			throw new Exception("Projeto nao encontrado.");
-		projetos.remove(projName);
+		
+		tarefaDao.removeAll(proj.getIdProj()); //remove todas as tarefas desse projeto antes...
+		projetoDao.remove(projName, this.id);
 	}
 	
 	public void adicionarPostIt(InfoPostIt info) throws Exception{
+		if( postitDao.exist(info.getTitulo(), this.id) )
+			throw new Exception("Ja existe um post-it com esse titulo na sua equipe.");
+		
 		this.postitDao.add(info, this.id);
 	}
 	
 	public void removerPostIt(String titulo) throws Exception{
-		this.postitDao.remove(titulo);
+		if( !postitDao.exist(titulo, this.id) )
+			throw new Exception("Post-it nao encontrado.");
+		
+		this.postitDao.remove(titulo, this.id);
 	}
 	
 	public InfoPostIt visualizarPostIt(String titulo) throws Exception{
-		return this.postitDao.view(titulo);
+		if( !postitDao.exist(titulo, this.id) )
+			throw new Exception("Post-it nao encontrado.");
+		
+		return this.postitDao.view(titulo, this.id);
 	}
 	
 	public void modificarPostIt(InfoPostIt info) throws Exception{
-		this.postitDao.edit(info);
+		if( !postitDao.exist(info.getTitulo(), this.id) )
+			throw new Exception("Post-it nao encontrado.");
+		
+		this.postitDao.edit(info, this.id);
 	}
 	
-	public boolean isMember(Usuario user){
-		return membros.containsKey(user.getLogin());
+	public void removeAllData() throws Exception{
+		postitDao.removeAll(this.id);
+		arquivoDao.removeAll(this.id);
+		usuarioDao.removeAllMembers(this.id);
+		projetoDao.removeAll(this.id, tarefaDao);
 	}
 }

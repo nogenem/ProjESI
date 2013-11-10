@@ -1,8 +1,5 @@
 package Controle;
 
-import java.sql.ResultSet;
-import java.util.HashMap;
-import java.util.Set;
 import Modelo.Equipe;
 import Modelo.Persistencia.EquipeDao;
 import Modelo.Usuario;
@@ -16,24 +13,9 @@ public class Dados {
 	private EquipeDao equipeDao;
 	private UsuarioDao usuarioDao;
 	
-	private HashMap<String, Usuario> usuarios;
-	private HashMap<String, Equipe> equipes;
-	
 	public Dados(){
 		equipeDao = new EquipeDao(new ConexaoBanco(), "EQUIPE");
 		usuarioDao = new UsuarioDao(new ConexaoBanco(), "USUARIO");
-		
-		usuarios = new HashMap<>();
-		usuarios.put("admin", new Usuario("admin", "admin", "mr. admin", 0));/* teste */
-		equipes = new HashMap<>();
-	}
-	
-	public HashMap<String, Equipe> getEquipes(){
-		return equipes;
-	}
-	
-	public HashMap<String, Usuario> getUsuarios(){
-		return usuarios;
 	}
 	
 	/*
@@ -46,8 +28,6 @@ public class Dados {
 	
 	/*
 	 * Retorna a instancia da Equipe pelo nome fornecido.
-	 * Caso nao encontre o nome da equipe, eh pq ela foi removida e o usuario
-	 * precisa deslogar para atualizar a sessao dele.
 	 */
 	public Equipe getEquipe(String equipeName) throws Exception
 	{
@@ -76,13 +56,7 @@ public class Dados {
 	 */
 	public void cadastrarUsuario(Usuario user) throws Exception
 	{
-		
-		if( this.getUsuario( user.getLogin() ) == null )
-		{
-			usuarioDao.addUsuario(user);
-			return;
-		}
-		throw new Exception("Usuario ja cadastrado.");
+		usuarioDao.addUsuario(user);
 	}
 	
 	/*
@@ -97,34 +71,5 @@ public class Dados {
 		else if(user.getNivel() == 1)
 			sessao = new Normal(user);
 		return sessao;
-	}
-	
-	public void adicionarEquipe(String equipeName) throws Exception
-	{
-		if( this.getEquipe( equipeName ) == null )
-		{
-			equipeDao.add(equipeName);
-		}
-		else
-		{
-			throw new Exception("Equipe ja adicionada.");
-		}
-	}
-	
-	public void removerEquipe(String equipeName) throws Exception
-	{
-		if( this.getEquipe( equipeName ) != null )
-		{
-			equipeDao.remove( equipeName );
-		}
-		else
-		{
-			throw new Exception("Equipe nao encontrada.");
-		}
-	}
-	
-	public Set<String> listarEquipes()throws Exception
-	{ 
-		return equipeDao.list();
 	}
 }

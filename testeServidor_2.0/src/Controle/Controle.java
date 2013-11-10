@@ -130,7 +130,11 @@ public class Controle {
 			dados.cadastrarUsuario(user);
 			packet.put("OK", "Cadastro efetuado com sucesso!");
 		} catch (Exception e) {
-			packet.put("err", e.getMessage());
+			if(e.getMessage().contains("Duplicate entry")){
+				packet.put("err", "Login ja esta em uso. Por favor escolha outro.");
+			}else{
+				packet.put("err", e.getMessage());
+			}
 		}
 		return packet;
 	}
@@ -158,9 +162,12 @@ public class Controle {
 		packet = new JSONObject();
 		try {
 			Equipe equipe = dados.getEquipe(equipeName);
-			
-			Set<String> tarefas = sessao.listarTarefas(equipe, projName);
-			packet.put("lista", tarefas);
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				Set<String> tarefas = sessao.listarTarefas(equipe, projName);
+				packet.put("lista", tarefas);
+			}
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
 		}
@@ -174,8 +181,12 @@ public class Controle {
 		packet = new JSONObject();
 		try {
 			Equipe equipe = dados.getEquipe(equipeName);
-			Set<String> projetos = sessao.listarProjetos(equipe);
-			packet.put("lista", projetos);
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				Set<String> projetos = sessao.listarProjetos(equipe);
+				packet.put("lista", projetos);
+			}
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
 		}
@@ -189,8 +200,12 @@ public class Controle {
 		packet = new JSONObject();
 		try {
 			Equipe equipe = dados.getEquipe(equipeName);
-			Set<String> arquivos = sessao.listarArquivos(equipe);
-			packet.put("lista", arquivos);
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				Set<String> arquivos = sessao.listarArquivos(equipe);
+				packet.put("lista", arquivos);
+			}
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
 		}
@@ -204,8 +219,12 @@ public class Controle {
 		packet = new JSONObject();
 		try {
 			Equipe equipe = dados.getEquipe(equipeName);
-			Set<String> membros = sessao.listarMembros(equipe);
-			packet.put("lista", membros);
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				Set<String> membros = sessao.listarMembros(equipe);
+				packet.put("lista", membros);
+			}
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
 		}
@@ -219,8 +238,12 @@ public class Controle {
 		packet = new JSONObject();
 		try {
 			Equipe equipe = dados.getEquipe(equipeName);
-			Set<String> postIts = sessao.listarPostIts(equipe);
-			packet.put("lista", postIts);
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				Set<String> postIts = sessao.listarPostIts(equipe);
+				packet.put("lista", postIts);
+			}
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
 		}
@@ -236,16 +259,15 @@ public class Controle {
 		packet = new JSONObject();
 		try {
 			Equipe equipe = dados.getEquipe(equipeName);
-			
-			InfoArquivo info = new InfoArquivo(titulo, conteudo);
-			sessao.adicionarArquivo(info, equipe);
-			packet.put("OK", "Arquivo adicionado com sucesso.");
-		} catch (Exception e) {
-			if(e.getMessage().contains("Duplicate entry")){
-				packet.put("err", "Ja existe um arquivo com esse titulo.");
-			}else{
-				packet.put("err", e.getMessage());
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				InfoArquivo info = new InfoArquivo(titulo, conteudo);
+				sessao.adicionarArquivo(info, equipe);
+				packet.put("OK", "Arquivo adicionado com sucesso.");
 			}
+		} catch (Exception e) {
+			packet.put("err", e.getMessage());
 		}
 		return packet;
 	}
@@ -258,8 +280,12 @@ public class Controle {
 		packet = new JSONObject();
 		try {
 			Equipe equipe = dados.getEquipe(equipeName);
-			sessao.removerArquivo(titulo, equipe);
-			packet.put("OK", "Arquivo removido com sucesso.");
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				sessao.removerArquivo(titulo, equipe);
+				packet.put("OK", "Arquivo removido com sucesso.");
+			}
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
 		}
@@ -274,13 +300,17 @@ public class Controle {
 		packet = new JSONObject();
 		try {
 			Equipe equipe = dados.getEquipe(equipeName);
-			InfoArquivo info = sessao.visualizarArquivo(titulo, equipe);
-			
-			HashMap<String, String> tmp2 = new HashMap<>();
-			tmp2.put("titulo", info.getTitulo());
-			tmp2.put("conteudo", info.getConteudo());
-			
-			packet.put("view", tmp2);
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				InfoArquivo info = sessao.visualizarArquivo(titulo, equipe);
+				
+				HashMap<String, String> tmp2 = new HashMap<>();
+				tmp2.put("titulo", info.getTitulo());
+				tmp2.put("conteudo", info.getConteudo());
+				
+				packet.put("view", tmp2);
+			}
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
 		}
@@ -296,8 +326,13 @@ public class Controle {
 		packet = new JSONObject();
 		try {
 			Equipe equipe = dados.getEquipe(equipeName);
-			sessao.modificarArquivo(new InfoArquivo(titulo, conteudo), equipe);
-			packet.put("OK", "Arquivo modificado com sucesso.");
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				InfoArquivo info = new InfoArquivo(titulo, conteudo); 
+				sessao.modificarArquivo(info, equipe);
+				packet.put("OK", "Arquivo modificado com sucesso.");
+			}
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
 		}
@@ -317,16 +352,16 @@ public class Controle {
 		packet = new JSONObject();
 		try {
 			Equipe equipe = dados.getEquipe(equipeName);
-			InfoTarefa info = new InfoTarefa(titulo, descricao, dataInicio, dataTermino, recursos);
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				InfoTarefa info = new InfoTarefa(titulo, descricao, dataInicio, dataTermino, recursos);
 			
-			sessao.adicionarTarefa(info, equipe, projName);
-			packet.put("OK", "Tarefa adicionada com sucesso.");
-		} catch (Exception e) {
-			if(e.getMessage().contains("Duplicate entry")){
-				packet.put("err", "Ja existe uma tarefa com esse nome.");
-			}else{
-				packet.put("err", e.getMessage());
+				sessao.adicionarTarefa(info, equipe, projName);
+				packet.put("OK", "Tarefa adicionada com sucesso.");
 			}
+		} catch (Exception e) {
+			packet.put("err", e.getMessage());
 		}
 		return packet;
 	}
@@ -340,8 +375,12 @@ public class Controle {
 		packet = new JSONObject();
 		try {
 			Equipe equipe = dados.getEquipe(equipeName);
-			sessao.removerTarefa(titulo, equipe, projName);
-			packet.put("OK", "Tarefa removida com sucesso.");
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				sessao.removerTarefa(titulo, equipe, projName);
+				packet.put("OK", "Tarefa removida com sucesso.");
+			}
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
 		}
@@ -357,16 +396,20 @@ public class Controle {
 		packet = new JSONObject();
 		try {
 			Equipe equipe = dados.getEquipe(equipeName);
-			InfoTarefa info = sessao.visualizarTarefa(titulo, equipe, projName);
-
-			HashMap<String, String> tmp2 = new HashMap<>();
-			tmp2.put("titulo", info.getTitulo());
-			tmp2.put("descricao", info.getDescricao());
-			tmp2.put("dataInicio", info.getDataInicio());
-			tmp2.put("dataTermino", info.getDataTermino());
-			tmp2.put("recursos", info.getRecursos());
-			
-			packet.put("view", tmp2);
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				InfoTarefa info = sessao.visualizarTarefa(titulo, equipe, projName);
+	
+				HashMap<String, String> tmp2 = new HashMap<>();
+				tmp2.put("titulo", info.getTitulo());
+				tmp2.put("descricao", info.getDescricao());
+				tmp2.put("dataInicio", info.getDataInicio());
+				tmp2.put("dataTermino", info.getDataTermino());
+				tmp2.put("recursos", info.getRecursos());
+				
+				packet.put("view", tmp2);
+			}
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
 		}
@@ -380,17 +423,21 @@ public class Controle {
 		String dataInicio = tmp.getString("dataInicio");
 		String dataTermino = tmp.getString("dataTermino");
 		String recursos = tmp.getString("recursos");
+		
 		String projName = tmp.getString("projName");
 		String equipeName = tmp.getString("equipe");
 		
 		packet = new JSONObject();
 		try {
 			Equipe equipe = dados.getEquipe(equipeName);
-			InfoTarefa info = new InfoTarefa(titulo, descricao, dataInicio, dataTermino, recursos);
-			
-			sessao.modificarTarefa(info, equipe, projName);
-		
-			packet.put("OK", "Tarefa modificada com sucesso.");
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				InfoTarefa info = new InfoTarefa(titulo, descricao, dataInicio, dataTermino, recursos);
+				
+				sessao.modificarTarefa(info, equipe, projName);
+				packet.put("OK", "Tarefa modificada com sucesso.");
+			}
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
 		}
@@ -405,10 +452,10 @@ public class Controle {
 		packet = new JSONObject();
 		try
 		{
-			Equipe equipe = new Equipe( equipeName );
-			if(dados.getUsuario(login) == null){
-				packet.put("err", "Usuario nao cadastrado.");
-			}else{				
+			Equipe equipe = dados.getEquipe(equipeName);
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{				
 				sessao.adicionarMembro( login, equipe );
 				packet.put("OK", "Usuario adicionado a equipe com sucesso.");
 			}
@@ -426,9 +473,12 @@ public class Controle {
 		packet = new JSONObject();
 		try {
 			Equipe equipe = dados.getEquipe(equipeName);
-			
-			sessao.removerMembro(login, equipe);
-			packet.put("OK", "Usuario removido da equipe com sucesso.");
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				sessao.removerMembro(login, equipe);
+				packet.put("OK", "Usuario removido da equipe com sucesso.");
+			}
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
 		}
@@ -444,15 +494,14 @@ public class Controle {
 		packet = new JSONObject();
 		try{
 			Equipe equipe = dados.getEquipe(equipeName);
-			
-			sessao.adicionarProjeto(projName, equipe);
-			packet.put("OK", "Projeto adicionado com sucesso.");
-		}catch(Exception e){
-			if(e.getMessage().contains("Duplicate entry")){
-				packet.put("err", "Ja existe um projeto com esse nome.");
-			}else{
-				packet.put("err", e.getMessage());
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				sessao.adicionarProjeto(projName, equipe);
+				packet.put("OK", "Projeto adicionado com sucesso.");
 			}
+		}catch(Exception e){
+			packet.put("err", e.getMessage());
 		}
 		return packet;
 	}
@@ -465,9 +514,12 @@ public class Controle {
 		packet = new JSONObject();
 		try{
 			Equipe equipe = dados.getEquipe(equipeName);
-			
-			sessao.removerProjeto(projName, equipe);
-			packet.put("OK", "Projeto removido com sucesso.");
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				sessao.removerProjeto(projName, equipe);
+				packet.put("OK", "Projeto removido com sucesso.");
+			}
 		}catch(Exception e){
 			packet.put("err", e.getMessage());
 		}
@@ -480,8 +532,7 @@ public class Controle {
 		
 		packet = new JSONObject();
 		try{
-			sessao.adicionarEquipe(equipeName); //gambiarra soh vai deixar ADMs usarem essa fun�ao
-			dados.adicionarEquipe(equipeName);
+			sessao.adicionarEquipe(equipeName); 
 			packet.put("OK", "Equipe adicionada com sucesso.");
 		}catch(Exception e){
 			if(e.getMessage().contains("Duplicate entry")){
@@ -499,8 +550,7 @@ public class Controle {
 		
 		packet = new JSONObject();
 		try{
-			sessao.removerEquipe(equipeName); //gambiarra soh vai deixar ADMs usarem essa fun�ao
-			dados.removerEquipe(equipeName);
+			sessao.removerEquipe(equipeName); 
 			packet.put("OK", "Equipe removida com sucesso.");
 		}catch(Exception e){
 			packet.put("err", e.getMessage());
@@ -511,13 +561,10 @@ public class Controle {
 	public JSONObject listarEquipes(JSONObject packet)
 	{
 		packet = new JSONObject();
-		try
-		{	
+		try{	
 			Set<String> equipes = sessao.listarEquipes();
 			packet.put("lista", equipes);
-		}
-		catch (Exception e)
-		{
+		}catch (Exception e){
 			packet.put("err", e.getMessage());
 		}
 		return packet;
@@ -526,7 +573,7 @@ public class Controle {
 	public JSONObject getLoginsAndNiveis(JSONObject packet){ //Retorna os logins e niveis de todos os usuarios.
 		packet = new JSONObject();
 		try{
-			HashMap<String, Integer> result = sessao.getLoginsAndNiveis(dados.getUsuarios());
+			HashMap<String, Integer> result = sessao.getLoginsAndNiveis();
 			packet.put("lista", result);			
 		}catch(Exception e){
 			packet.put("err", e.getMessage());
@@ -541,9 +588,7 @@ public class Controle {
 		
 		packet = new JSONObject();
 		try {
-			sessao.modificarNivel(login, nivel); //gambiarra soh vai deixar ADMs usarem essa fun�ao
-			Usuario user = dados.getUsuario(login);
-			user.setNivel(nivel);
+			sessao.modificarNivel(login, nivel); 
 			packet.put("OK", "Nivel modificado com sucesso. O usuario tem que se desconectar para a mudanca ocorrer.");
 		} catch (Exception e) {
 			packet.put("err", e.getMessage());
@@ -559,18 +604,18 @@ public class Controle {
 		
 		packet = new JSONObject();
 		try{
-			Usuario user = sessao.getUser();
 			Equipe equipe = dados.getEquipe(equipeName);
-			InfoPostIt info = new InfoPostIt(titulo, conteudo, user.getIdUsuario());
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				Usuario user = sessao.getUser();
+				InfoPostIt info = new InfoPostIt(titulo, conteudo, user.getIdUsuario());
 			
-			sessao.adicionarPostIt(info, equipe);
-			packet.put("OK", "Post-it adicionado com sucesso.");
-		}catch (Exception e){
-			if(e.getMessage().contains("Duplicate entry")){
-				packet.put("err", "Ja existe um post-it com esse nome.");
-			}else{
-				packet.put("err", e.getMessage());
+				sessao.adicionarPostIt(info, equipe);
+				packet.put("OK", "Post-it adicionado com sucesso.");
 			}
+		}catch (Exception e){
+			packet.put("err", e.getMessage());
 		}
 		return packet;
 	}
@@ -583,9 +628,12 @@ public class Controle {
 		packet = new JSONObject();
 		try{
 			Equipe equipe = dados.getEquipe(equipeName);
-			
-			sessao.removerPostIt(titulo, equipe);
-			packet.put("OK", "Post-it removido com sucesso.");
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				sessao.removerPostIt(titulo, equipe);
+				packet.put("OK", "Post-it removido com sucesso.");
+			}
 		}catch (Exception e){
 			packet.put("err", e.getMessage());
 		}
@@ -600,14 +648,18 @@ public class Controle {
 		packet = new JSONObject();
 		try{
 			Equipe equipe = dados.getEquipe(equipeName);	
-			InfoPostIt info = sessao.visualizarPostIt(titulo, equipe);
-			
-			HashMap<String, String> tmp2 = new HashMap<>();
-			tmp2.put("titulo", info.getTitulo());
-			tmp2.put("conteudo", info.getConteudo());
-			tmp2.put("emissor", info.getLoginEmissor());
-			
-			packet.put("view", tmp2);
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				InfoPostIt info = sessao.visualizarPostIt(titulo, equipe);
+				
+				HashMap<String, String> tmp2 = new HashMap<>();
+				tmp2.put("titulo", info.getTitulo());
+				tmp2.put("conteudo", info.getConteudo());
+				tmp2.put("emissor", info.getLoginEmissor());
+				
+				packet.put("view", tmp2);
+			}
 		}catch (Exception e){
 			packet.put("err", e.getMessage());
 		}
@@ -622,12 +674,15 @@ public class Controle {
 		
 		packet = new JSONObject();
 		try{
-			Usuario user = sessao.getUser();
 			Equipe equipe = dados.getEquipe(equipeName);
-			InfoPostIt info = new InfoPostIt(titulo, conteudo, user.getIdUsuario());
-			
-			sessao.modificarPostIt(info, equipe);
-			packet.put("OK", "Post-it modificado com sucesso.");
+			if(equipe == null)
+				packet.put("err", "Equipe nao encontrada.");
+			else{
+				InfoPostIt info = new InfoPostIt(titulo, conteudo);
+
+				sessao.modificarPostIt(info, equipe);
+				packet.put("OK", "Post-it modificado com sucesso.");
+			}
 		}catch (Exception e){
 			packet.put("err", e.getMessage());
 		}

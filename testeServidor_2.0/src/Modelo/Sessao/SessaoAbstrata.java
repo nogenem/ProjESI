@@ -12,8 +12,9 @@ import Modelo.Infos.InfoTarefa;
 import Modelo.Persistencia.ConexaoBanco;
 
 public abstract class SessaoAbstrata
-{	protected EquipeDao equipeDao;
-	private Usuario user; //Ao meu ver assim fica melhor mas...
+{	
+	protected EquipeDao equipeDao;
+	private Usuario user; 
 	
 	public SessaoAbstrata(Usuario user){
 		this.user = user;
@@ -109,7 +110,7 @@ public abstract class SessaoAbstrata
 		throw new Exception("Voce nao tem permissao para executar esta açao.");
 	}
 	
-	public HashMap<String, Integer> getLoginsAndNiveis(HashMap<String, Usuario> usuarios) throws Exception{
+	public HashMap<String, Integer> getLoginsAndNiveis() throws Exception{
 		throw new Exception("Voce nao tem permissao para executar esta açao.");
 	}
 	

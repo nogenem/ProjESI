@@ -48,6 +48,7 @@ public class EquipeDao extends Dao
 	public Set<String> list() throws Exception
 	{
 		this.select("");
+		
 		ResultSet result = this.getResultSet();
 		Set<String> setReturn = new HashSet<>();
 		
@@ -60,10 +61,10 @@ public class EquipeDao extends Dao
 	
 	public Equipe getEquipe( int idEquipe ) throws Exception
 	{
-		HashMap<String, String> condicoes = new HashMap<>();
-		condicoes.put( "ID_EQUIPE" , idEquipe+"" );
+		HashMap<String, String> cond = new HashMap<>();
+		cond.put( "ID_EQUIPE" , ""+idEquipe );
 		
-		select( condicoes  );
+		this.select( cond  );
 		
 		ResultSet result = getResultSet();
 		if( result != null && result.next() )

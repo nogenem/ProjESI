@@ -7,46 +7,41 @@ import Modelo.Infos.InfoTarefa;
 public class Projeto {
 
 	private String nome;
-	private HashMap<String, Tarefa> tarefas; //Lista das tarefas que o projeto possui.
+	private int id_equipe;
+	private int id_proj;
 	
 	public Projeto(String nome){
 		this.nome = nome;
-		this.tarefas = new HashMap<>();
+	}
+	
+	public Projeto(String nome, int id_equipe, int id_proj)
+	{
+		this.nome = nome;
+		this.id_equipe = id_equipe;
+		this.id_proj = id_proj;
 	}
 	
 	public String getNome() {
 		return nome;
 	}
 	
-	public HashMap<String, Tarefa> getTarefas() {
-		return tarefas;
+	public int getIdEquipe()
+	{
+		return id_equipe;
 	}
 	
-	public Set<String> listarTarefas() throws Exception{
-		return tarefas.keySet();
+	public void setIdEquipe(int id_equipe)
+	{
+		this.id_equipe = id_equipe;
 	}
 	
-	public void adicionarTarefa(InfoTarefa info) throws Exception{
-		if(tarefas.containsKey(info.getTitulo()))
-			throw new Exception("Tarefa ja adicionada a esse projeto.");
-		tarefas.put(info.getTitulo(), new Tarefa(info));
+	public int getIdProj()
+	{
+		return id_proj;
 	}
 	
-	public void removerTarefa(String titulo) throws Exception{
-		if(!tarefas.containsKey(titulo))
-			throw new Exception("Tarefa nao encontrada.");
-		tarefas.remove(titulo);
-	}
-	
-	public InfoTarefa visualizarTarefa(String titulo) throws Exception{
-		if(!tarefas.containsKey(titulo))
-			throw new Exception("Tarefa nao encontrada.");
-		return tarefas.get(titulo).visualizarTarefa();
-	}
-	
-	public void modificarTarefa(InfoTarefa info) throws Exception{
-		if(!tarefas.containsKey(info.getTitulo()))
-			throw new Exception("Tarefa nao encontrada.");
-		tarefas.get(info.getTitulo()).modificarTarefa(info);
+	public void setIdProj(int id_proj)
+	{
+		this.id_proj = id_proj;
 	}
 }

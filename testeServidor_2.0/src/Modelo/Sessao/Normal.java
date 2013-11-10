@@ -36,7 +36,6 @@ public class Normal extends SessaoAbstrata {
 	
 	public Set<String> listarEquipes() throws Exception
 	{
-		EquipeDao equipeDao = new EquipeDao( new ConexaoBanco(), "EQUIPE");
 		Equipe myEquipe = equipeDao.getEquipe( this.getUser().getIdEquipe() );
 		
 		Set<String> volta = new HashSet<>();

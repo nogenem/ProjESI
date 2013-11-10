@@ -9,6 +9,8 @@ import Modelo.Usuario;
 import Modelo.Infos.InfoArquivo;
 import Modelo.Infos.InfoPostIt;
 import Modelo.Infos.InfoTarefa;
+import Modelo.Persistencia.ConexaoBanco;
+import Modelo.Persistencia.UsuarioDao;
 
 public class Administrador extends SessaoAbstrata {
 	
@@ -89,26 +91,26 @@ public class Administrador extends SessaoAbstrata {
 	}
 
 	public void adicionarEquipe(String equipeName) throws Exception{
-		//gambiarra
+		equipeDao.add(equipeName);
 	}
 
     public void removerEquipe(String equipeName) throws Exception{
-    	//gambiarra
+    	Equipe equipe = equipeDao.getEquipe( equipeName );
+		if(equipe == null)
+			throw new Exception("Equipe nao encontrada.");
+		
+		equipe.removeAllData();
+		equipeDao.remove(equipeName);
 	}
     
-    public HashMap<String, Integer> getLoginsAndNiveis(HashMap<String, Usuario> usuarios) throws Exception{
-		
-    	Collection<Usuario> users = usuarios.values();  
-    	HashMap<String, Integer> result = new HashMap<>();
-    	
-    	for(Usuario u : users){
-    		result.put(u.getLogin(), u.getNivel());
-    	}
-    	return result;
+    public HashMap<String, Integer> getLoginsAndNiveis() throws Exception{
+    	UsuarioDao usuarioDao = new UsuarioDao(new ConexaoBanco(), "USUARIO");
+    	return usuarioDao.getLoginsAndNiveis();
 	}
     
     public void modificarNivel(String login, int nivel) throws Exception{
-		//gambiarra
+    	UsuarioDao usuarioDao = new UsuarioDao(new ConexaoBanco(), "USUARIO");
+    	usuarioDao.editNivel(login, nivel);
 	}
     
     public void adicionarPostIt(InfoPostIt info, Equipe equipe) throws Exception{

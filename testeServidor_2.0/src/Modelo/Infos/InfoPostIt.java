@@ -6,6 +6,11 @@ public class InfoPostIt {
 	private String login_emissor; ////Guarda o login de quem enviou o post-it.
 	private int id_emissor; //Guarda o id de quem enviou o post-it.  
 	
+	public InfoPostIt(String titulo, String conteudo){
+		this.titulo = titulo;
+		this.conteudo = conteudo;
+	}
+	
 	public InfoPostIt(String titulo, String conteudo, int id_emissor){
 		this.titulo = titulo;
 		this.conteudo = conteudo;

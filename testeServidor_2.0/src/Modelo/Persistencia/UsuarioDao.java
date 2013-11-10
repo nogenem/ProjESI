@@ -40,10 +40,11 @@ public class UsuarioDao extends Dao
 	public void addUsuario( Usuario user ) throws Exception
 	{
 		HashMap<String, String> dados = new HashMap<>();
-		dados.put( "NOME" , user.getNome() );
 		dados.put( "LOGIN" , user.getLogin() );
-		dados.put( "NIVEL" , user.getNivel()+"" );
 		dados.put( "SENHA" , user.getSenha() );
+		dados.put( "NOME" , user.getNome() );
+		dados.put( "NIVEL" , ""+user.getNivel() );
+		
 		this.insert(dados);
 	}
 	
@@ -97,5 +98,41 @@ public class UsuarioDao extends Dao
 			return user;
 		}
 		return null;
+	}
+	
+	public void removeAllMembers(int id_equipe) throws Exception
+	{
+		HashMap<String, String> dados = new HashMap<>();
+		dados.put( "ID_EQUIPE" , null );
+		
+		HashMap<String, String> condicoes = new HashMap<>();
+		condicoes.put( "ID_EQUIPE" , ""+id_equipe );
+		
+		update( dados , condicoes ); 
+	}
+	
+	public HashMap<String, Integer> getLoginsAndNiveis() throws Exception
+	{
+		HashMap<String, Integer> retorno = new HashMap<>();
+		
+		this.select("");
+		ResultSet result = this.getResultSet();
+		
+		while( result != null && result.next() )
+		{
+			retorno.put( result.getString("LOGIN"), result.getInt("NIVEL") );
+		}
+		return retorno;
+	}
+	
+	public void editNivel(String login, int nivel) throws Exception
+	{
+		HashMap<String, String> dados = new HashMap<>();
+		dados.put("NIVEL", ""+nivel);
+		
+		HashMap<String, String> cond = new HashMap<>();
+		cond.put("LOGIN", login);
+		
+		this.update(dados, cond);
 	}
 }

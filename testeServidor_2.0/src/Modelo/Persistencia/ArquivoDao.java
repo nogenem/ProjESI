@@ -23,18 +23,28 @@ public class ArquivoDao extends Dao {
 		this.insert(dados);
 	}
 	
-	public void remove(String titulo) throws Exception
+	public void remove(String titulo, int id_equipe) throws Exception
 	{
 		HashMap<String, String> cond = new HashMap<>();
 		cond.put("TITULO", titulo);
+		cond.put("ID_EQUIPE", ""+id_equipe);
 		
 		this.delete(cond);
 	}
 	
-	public InfoArquivo view(String titulo) throws Exception
+	public void removeAll(int id_equipe) throws Exception //Vai remover todos os arquivos da equipe q veio como parametro
+	{
+		HashMap<String, String> cond = new HashMap<>();
+		cond.put("ID_EQUIPE", ""+id_equipe);
+		
+		this.delete(cond);
+	}
+	
+	public InfoArquivo view(String titulo, int id_equipe) throws Exception
 	{
 		HashMap<String, String> cond = new HashMap<>();
 		cond.put("TITULO", titulo);
+		cond.put("ID_EQUIPE", ""+id_equipe);
 		
 		this.select(cond);
 		
@@ -56,6 +66,7 @@ public class ArquivoDao extends Dao {
 		
 		HashMap<String, String> cond = new HashMap<>();
 		cond.put("TITULO", info.getTitulo());
+		cond.put("ID_EQUIPE", ""+id_equipe);
 		
 		this.update(dados, cond);
 	}
@@ -77,4 +88,15 @@ public class ArquivoDao extends Dao {
 		return retorno;
 	}
 	
+	public boolean exist(String titulo, int id_equipe) throws Exception
+	{
+		HashMap<String, String> cond = new HashMap<>();
+		cond.put("TITULO", titulo);
+		cond.put("ID_EQUIPE", ""+id_equipe);
+		
+		this.select(cond);
+		
+		ResultSet result = this.getResultSet();
+		return result != null && result.next();
+	}
 }
