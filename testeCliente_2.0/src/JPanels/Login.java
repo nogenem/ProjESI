@@ -125,6 +125,7 @@ public class Login extends JPanel implements ActionListener, INossoPanel, Notifi
 
 			escritor.println( tmp.toString() );
 			escritor.flush();
+			escritor.close();
 
 			System.exit(0);
 		}else if(arg0.getActionCommand().equals( "Cadastrar" )){

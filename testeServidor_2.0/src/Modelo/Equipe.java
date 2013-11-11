@@ -101,21 +101,16 @@ public class Equipe
 		Projeto proj = projetoDao.getProj(projName, this.id);
 		if(proj == null)
 			throw new Exception("Projeto nao encontrado.");
-		else if( tarefaDao.exist(info.getTitulo(), proj.getIdProj()) )
-			throw new Exception("Ja existe uma tarefa com esse titulo no seu projeto.");
 		
-		info.setIdProjeto(proj.getIdProj());
-		tarefaDao.add(info);
+		proj.adicionarTarefa(info);
 	}
 	
 	public void removerTarefa(String titulo, String projName) throws Exception{
 		Projeto proj = projetoDao.getProj(projName, this.id);
 		if(proj == null)
 			throw new Exception("Projeto nao encontrado.");
-		else if( !tarefaDao.exist(titulo, proj.getIdProj()) )
-			throw new Exception("Tarefa nao encontrada.");
 		
-		tarefaDao.remove(titulo, proj.getIdProj());
+		proj.removerTarefa(titulo);
 	}
 	
 	public InfoTarefa visualizarTarefa(String titulo, String projName) throws Exception{
@@ -123,23 +118,15 @@ public class Equipe
 		if(proj == null)
 			throw new Exception("Projeto nao encontrado.");
 		
-		InfoTarefa info = tarefaDao.getTarefa(titulo, proj.getIdProj());
-		
-		if(info == null)
-			throw new Exception("Tarefa nao encontrada.");
-		
-		return info;
+		return proj.visualizarTarefa(titulo);
 	}
 	
 	public void modificarTarefa(InfoTarefa info, String projName) throws Exception{
 		Projeto proj = projetoDao.getProj(projName, this.id);
 		if(proj == null)
 			throw new Exception("Projeto nao encontrado.");
-		else if( !tarefaDao.exist(info.getTitulo(), proj.getIdProj()) )
-			throw new Exception("Tarefa nao encontrada.");
 		
-		info.setIdProjeto(proj.getIdProj());
-		tarefaDao.edit(info);
+		proj.modificarTarefa(info);
 	}	
 	
 	public void adicionarMembro( String loginUser ) throws Exception

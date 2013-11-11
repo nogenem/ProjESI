@@ -57,6 +57,7 @@ public class GUI implements Notificavel {
         	
         	myWindow.getEscritor().println(packet.toString());
         	myWindow.getEscritor().flush();
+        	myWindow.getEscritor().close();
         }
 	}
 	
