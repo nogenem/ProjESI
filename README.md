@@ -1,4 +1,4 @@
 ProjTest
 ========
 
-Teste para o projeto de ES I
+Código do projeto final da matéria de Engenharia de Software I
